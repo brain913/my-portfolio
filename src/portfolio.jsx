@@ -177,8 +177,17 @@ const EDUCATION = [
 ];
 
 const CERTIFICATES = [
-  { name: "Google Developer Student Clubs", issuer: "Google", year: "2024", link: "#" },
-  { name: "Introduction to Cybersecurity",  issuer: "Cisco NetAcad", year: "2024", link: "#" },
+  { name: "Chrome DevTools User", issuer: "Google", year: "2026", link: "#" },
+  { name: "DOM Detective", issuer: "Google", year: "2026", link: "#" },
+  { name: "Android Studio User", issuer: "Google", year: "2025", link: "#" },
+  { name: "Machine Learning Crash Course: Numerical Data", issuer: "Google", year: "2025", link: "#" },
+  { name: "Firebase Studio Developer Community", issuer: "Google", year: "2025", link: "#" },
+  { name: "Machine Learning Crash Course: Classification", issuer: "Google", year: "2025", link: "#" },
+  { name: "Machine Learning Crash Course: Logistic Regression", issuer: "Google", year: "2025", link: "#" },
+  { name: "Learning", issuer: "Google", year: "2025", link: "#" },
+  { name: "Machine Learning Crash Course: Linear Regression", issuer: "Google", year: "2025", link: "#" },
+  { name: "I/O 2025 - Registered", issuer: "Google", year: "2025", link: "#" },
+  { name: "Joined the Google Developer Program", issuer: "Google", year: "2025", link: "#" }
 ];
 
 const REFERENCES = [
