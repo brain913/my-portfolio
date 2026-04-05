@@ -196,7 +196,7 @@ const SKILLS = [
 const GALLERY = [
   { label: "Campfire Hackathon",                    caption: "Building, hacking, and vibing — a night to remember.",              src: "/gallery/campfire.jpg"  },
   { label: "Fried Brothers with Friends",           caption: "Good food, great people. The crew at our favourite spot.",           src: "/gallery/fried1.jpg"    },
-  { label: "Fried Brothers with Friends",           caption: "Neon lights and nuggets — peak dining experience.",                  src: "/gallery/fried2.jpg"    },
+  { label: "Fried Brothers with Friends",           caption: "Neon lights and fries — peak dining experience.",                  src: "/gallery/fried2.jpg"    },
   { label: "Mock Trial vs James Ruse Ag HS",        caption: "Lost by 9 pts — but we held our own in the courtroom.",             src: "/gallery/mocktrial.jpg" },
   { label: "Comp Club UNSW AI Course",              caption: "Learning AI with the Competitive Programming Club at UNSW.",         src: "/gallery/compclub.jpg"  },
   { label: "UNSW AI Conference @ W Sydney",         caption: "The Darling Harbour view from the W Hotel.",                        src: "/gallery/unsw1.jpg"     },
@@ -235,7 +235,7 @@ const CMD_ITEMS = [
 const TABS = ["Work Experience", "Education", "References", "Tech Stack", "Gallery", "Projects", "Connect"];
 // Short labels for mobile bottom bar
 const TAB_SHORT = { "Work Experience": "Work", "Education": "Edu", "References": "Refs", "Tech Stack": "Stack", "Gallery": "Gallery", "Projects": "Projects", "Connect": "Connect" };
-const TAB_ICON  = { "Work Experience": "💼", "Education": "🎓", "References": "💬", "Tech Stack": "⚙️", "Gallery": "🖼", "Projects": "🎬", "Connect": "📡" };
+const TAB_ICON  = { "Work Experience": "💼", "Education": "🎓", "References": "💬", "Tech Stack": "⚙️", "Gallery": "🌇", "Projects": "🎬", "Connect": "📡" };
 
 /* ─── SHARED UI ───────────────────────────────────────────────── */
 const Hr = () => <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "4px 0 18px" }} />;
@@ -1010,7 +1010,7 @@ export default function Portfolio() {
           <div style={{ position: "sticky", bottom: 0, height: 80, background: "linear-gradient(to top, #0c0f0a, transparent)", pointerEvents: "none" }} />
 
           <footer style={{ padding: "12px clamp(16px,4vw,36px) clamp(80px,12vw,36px)", borderTop: "1px solid rgba(255,255,255,0.07)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "rgba(255,255,255,0.2)" }}>© 2025 Vatsal Mehta · Blacktown, NSW</span>
+            <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "rgba(255,255,255,0.2)" }}>Made with ❤️ & 👑 by Vatsal & Claude</span>
             <button onClick={openCmd} style={{ background: "none", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontFamily: "var(--mono)", fontSize: 10, color: "rgba(255,255,255,0.25)" }}>⌘K</button>
           </footer>
         </div>
