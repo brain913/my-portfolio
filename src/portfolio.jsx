@@ -888,7 +888,7 @@ const CONTENT = {
   "Connect":         Connect,
 };
 
-export default function Portfolio() {
+export default function Portfolio({ onToggle }) {
   const [active, setActive]     = useState("Work Experience");
   const [theme, setTheme]       = useState("green");
   const [cmdOpen, setCmdOpen]   = useState(false);
@@ -1018,6 +1018,22 @@ export default function Portfolio() {
 
       {/* Mobile bottom tab bar */}
       {isMobile && <MobileTabBar active={active} setActive={handleTabChange} />}
+      {/* Design toggle */}
+      <button onClick={onToggle}
+        style={{ position:"fixed", bottom: isMobile ? 90 : 28, right: 20, zIndex: 500,
+          display:"flex", alignItems:"center", gap: 8, padding:"10px 18px",
+          borderRadius: 999, background:"rgba(255,255,255,0.07)",
+          backdropFilter:"blur(16px)", WebkitBackdropFilter:"blur(16px)",
+          border:"1px solid rgba(255,255,255,0.14)",
+          boxShadow:"0 8px 24px rgba(0,0,0,0.35)",
+          cursor:"pointer", fontFamily:"var(--mono)", fontSize: 12,
+          color: "rgba(255,255,255,0.75)", transition:"all 0.2s",
+        }}
+        onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.13)";e.currentTarget.style.transform="translateY(-2px)";}}
+        onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.07)";e.currentTarget.style.transform="none";}}
+      >
+        <span style={{fontSize:16}}>&#x2728;</span> Switch to Glass
+      </button>
     </>
   );
 }
