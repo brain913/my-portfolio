@@ -40,15 +40,23 @@ const IMG = {
   scrapyard2:"https://framerusercontent.com/images/sAPlOltwcpel7KaPCn3F0RwlEU.jpg?scale-down-to=1024",
   athletics:"https://framerusercontent.com/images/QUj5yg4QAZFH8t6eJb1SJCCE.png?scale-down-to=1024",
   flowerVid:"https://framerusercontent.com/assets/J9mOhxlb8oAWga9V9J7FMk7Y.mp4",
+  daydreamPhoto: "https://framerusercontent.com/images/SzFUezPNJJVFtZO9J4QAIQBxI.jpeg?scale-down-to=2048&width=5712&height=4284",
+  daydreamIcon: "https://daydream.hackclub.com/favicon.png",
   squareVid:"https://framerusercontent.com/assets/Xa80JloFiy8jFUQd7V9kAzma5L4.mp4",
 };
+
 const STATS = [
-  { label:"AccelRT",        sub:"Non-profit", val:"Active"    },
-  { label:"FiRST Robotics", sub:"APOC",       val:"Competed"  },
-  { label:"BBHS Cafe",      sub:"Barista",    val:"Active"    },
-  { label:"City2Surf",      sub:"Volunteer",  val:"Completed" },
+  { label: "Hackathons",     sub: "Organised/Competed", val: "2+"    },
+  { label: "Model United Nations",   sub: "Competing",      val: "Competing"   },
+  { label: "AccelRT",        sub: "Non-profit", val: "2025"    },
+  { label: "FIRST Robotics Submerged", sub: "APOC",       val: "Volunteered"  },
+  { label: "FIRST Robotics Unearthed", sub: "Nationals",       val: "Competed"  },
+  { label: "FIRST Robotics Unearthed", sub: "Regionals (UNSW, Bossley Park)", val: "Volunteered"  },
+  { label: "BBHS Cafe",      sub: "Barista",    val: "2024-2025"    },
+  { label: "City2Surf",      sub: "Volunteer",  val: "Completed" },
 ];
 const EXPERIENCE = [
+  { period:"2025",         role:"Hackathon Organiser", company:"Hack Club",      link:"https://daydream.hackclub.com/sydney", location:"UNSW - In person", logo:IMG.daydreamIcon, siteImg:IMG.daydreamPhoto, summary:"Work at Hack Club, a non-profit dedicated to creating and organising Hackathons for students in Australia. This gives me the ability to put volunteering and the ability to work in a formal but work from home environment. All of our spending is visible through Hack Club Bank.", achievements:["Organised hackathon events connecting students with industry across Australia","Managed event logistics and participant communication end-to-end","All spending is transparently tracked through Hack Club Bank"], tags:["Events","Community","Leadership"] },
   { period:"2024 – 2025", role:"Volunteer",             company:"AccelRT",       link:"https://accelrt-v2.vercel.app/",        location:"Sydney – Hybrid",    logo:IMG.accelrtLogo,  siteImg:IMG.accelrtSite,  summary:"Work at AccelRT, a non-profit dedicated to creating and organising Hackathons for students in Australia. This gives me the ability to put volunteering and the ability to work in a formal but work from home environment. All of our spending is visible through Hack Club Bank.", achievements:["Organised hackathon events connecting students with industry across Australia","Managed event logistics and participant communication end-to-end","All spending is transparently tracked through Hack Club Bank"], tags:["Events","Community","Leadership"] },
   { period:"2024",         role:"Table Reset Volunteer", company:"FIRST Robotics",link:"https://www.firstlegoleague.org/",      location:"Sydney – In person", logo:IMG.roboticsLogo, siteImg:IMG.roboticsSite, summary:"Volunteered at FIRST Robotics, Asia Pacific Open Championship (APOC) with a table reset role which taught me how to work in a fast-paced timed environment.", achievements:["Managed fast-paced timed table resets across all competition rounds","Collaborated with international teams at the Asia Pacific Open Championship"], tags:["Robotics","STEM","Teamwork"] },
   { period:"2023 – 2025",  role:"Barista",               company:"BBHS Cafe",     link:"#",                                     location:"Blacktown, NSW",     logo:IMG.cafeLogo,     siteImg:IMG.cafeSite,     summary:"A barista who makes coffees, hot chocolates, shakes and cheese toasties for students and teachers. Gives me the ability to work in a fast-paced environment with a way of learning how to communicate and deliver products in a successful manner.", achievements:["High-volume, fast-paced customer service in a school cafe setting","Developed communication and product delivery skills"], tags:["Customer Service","F&B"] },
