@@ -47,8 +47,6 @@ export const duration = {
   who prefer reduced motion — no separate code paths needed.
 ─────────────────────────────────────────────────────────────────── */
 export function mkVariants(reduced = false) {
-  const d = reduced ? 0 : undefined; // shorthand
-
   return {
     /* ── Page / Section transitions ── */
     page: {
