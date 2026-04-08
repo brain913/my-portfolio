@@ -1,192 +1,115 @@
-/**
- * animations.js — Centralised Framer Motion animation system
+/* animations.js - Centralised Framer Motion animation system
  *
- * USAGE:
- *   import { V, spring, ease, mkVariants } from "./animations";
- *   const variants = mkVariants(useReducedMotion());
- *   <motion.div variants={variants.item} initial="hidden" animate="show" />
+ * Usage:
+ *   import { mkVariants, mkGestures, SP, EA, TR } from "./animations";
+ *   const V = mkVariants(useReducedMotion());
+ *   const G = mkGestures(useReducedMotion());
  *
- * DESIGN PRINCIPLES:
- *   1. Single source of truth for all durations, easings and spring configs.
- *   2. Every exported variant accepts `reduced` (from useReducedMotion) to
- *      collapse animations to instant for accessibility compliance.
- *   3. Variants compose: stagger containers + item children work together
- *      without extra config.
- *   4. Nothing here causes re-renders — values are plain objects, not state.
+ * All functions accept `r` = result of useReducedMotion().
+ * When r=true, all durations collapse to 0 for accessibility.
  */
 
-/* ─── EASING CURVES ─────────────────────────────────────────────── */
-export const ease = {
-  out:    [0.25, 0.46, 0.45, 0.94],   // smooth deceleration (page slides)
-  in:     [0.55, 0.06, 0.68, 0.19],   // sharp acceleration (exits)
-  inOut:  [0.76, 0, 0.24, 1],          // balanced (theme transitions)
-  overshoot: [0.34, 1.56, 0.64, 1],    // spring-like overshoot for hovers
+/* ── Easing curves ───────────────────────────────────────────────── */
+export const EA = {
+  out:  [0.25, 0.46, 0.45, 0.94],  /* smooth deceleration */
+  in:   [0.55, 0.06, 0.68, 0.19],  /* sharp acceleration (exits) */
+  io:   [0.76, 0, 0.24, 1],         /* balanced inOut */
 };
 
-/* ─── SPRING CONFIGS ────────────────────────────────────────────── */
-export const spring = {
-  default:  { type: "spring", damping: 28, stiffness: 320 },
-  snappy:   { type: "spring", damping: 22, stiffness: 400 },
-  bouncy:   { type: "spring", damping: 18, stiffness: 360 },
-  stiff:    { type: "spring", damping: 32, stiffness: 500 },
-  gentle:   { type: "spring", damping: 35, stiffness: 260 },
+/* ── Spring configs ──────────────────────────────────────────────── */
+export const SP = {
+  default: { type: "spring", damping: 28, stiffness: 320 },
+  snappy:  { type: "spring", damping: 22, stiffness: 400 },
+  bouncy:  { type: "spring", damping: 18, stiffness: 360 },
+  stiff:   { type: "spring", damping: 32, stiffness: 500 },
+  gentle:  { type: "spring", damping: 35, stiffness: 260 },
 };
 
-/* ─── DURATION SCALE ────────────────────────────────────────────── */
-export const duration = {
-  instant: 0,
-  fast:    0.16,
-  base:    0.22,
-  slow:    0.32,
-  xslow:   0.5,
-};
-
-/* ─── VARIANT FACTORY ────────────────────────────────────────────
-  Call mkVariants(reduced) once per component, using the result of
-  useReducedMotion(). This collapses all durations to 0 for users
-  who prefer reduced motion — no separate code paths needed.
-─────────────────────────────────────────────────────────────────── */
-export function mkVariants(reduced = false) {
-  const d = reduced ? 0 : undefined; // shorthand
-
+/* ── Variant factory ─────────────────────────────────────────────── */
+export function mkVariants(r = false) {
   return {
-    /* ── Page / Section transitions ── */
+    /* Page/section swap - AnimatePresence mode="wait" */
     page: {
-      hidden: { opacity: 0, y: reduced ? 0 : 10 },
-      show:   { opacity: 1, y: 0,
-                transition: { duration: reduced ? 0 : duration.slow, ease: ease.out } },
-      exit:   { opacity: 0, y: reduced ? 0 : -6,
-                transition: { duration: reduced ? 0 : duration.fast, ease: ease.in } },
+      hidden: { opacity: 0, y: r ? 0 : 10 },
+      show:   { opacity: 1, y: 0, transition: { duration: r ? 0 : 0.32, ease: EA.out } },
+      exit:   { opacity: 0, y: r ? 0 : -6, transition: { duration: r ? 0 : 0.16, ease: EA.in } },
     },
-
-    /* ── Stagger container — wrap lists/grids ── */
+    /* Stagger container - parent of item variants */
     stagger: {
       hidden: {},
-      show:   { transition: {
-        staggerChildren: reduced ? 0 : 0.065,
-        delayChildren:   reduced ? 0 : 0.04,
-      }},
+      show:   { transition: { staggerChildren: r ? 0 : 0.065, delayChildren: r ? 0 : 0.04 } },
     },
-
-    /* ── Stagger child — used inside a stagger container ── */
+    /* Stagger child */
     item: {
-      hidden: { opacity: 0, y: reduced ? 0 : 12 },
-      show:   { opacity: 1, y: 0,
-                transition: { duration: reduced ? 0 : duration.base, ease: ease.out } },
+      hidden: { opacity: 0, y: r ? 0 : 12 },
+      show:   { opacity: 1, y: 0, transition: { duration: r ? 0 : 0.26, ease: EA.out } },
     },
-
-    /* ── Fade only (no translate) ── */
+    /* Simple fade - overlays, image swaps */
     fade: {
       hidden: { opacity: 0 },
-      show:   { opacity: 1, transition: { duration: reduced ? 0 : duration.base } },
-      exit:   { opacity: 0, transition: { duration: reduced ? 0 : duration.fast } },
+      show:   { opacity: 1, transition: { duration: r ? 0 : 0.22 } },
+      exit:   { opacity: 0, transition: { duration: r ? 0 : 0.16 } },
     },
-
-    /* ── Modal / Dialog panels ── */
+    /* Modal/command palette panel */
     modal: {
-      hidden: { opacity: 0, scale: reduced ? 1 : 0.96, y: reduced ? 0 : -8 },
-      show:   { opacity: 1, scale: 1, y: 0,
-                transition: { duration: reduced ? 0 : duration.base, ease: ease.out } },
-      exit:   { opacity: 0, scale: reduced ? 1 : 0.97,
-                transition: { duration: reduced ? 0 : duration.fast } },
+      hidden: { opacity: 0, scale: r ? 1 : 0.96, y: r ? 0 : -8 },
+      show:   { opacity: 1, scale: 1, y: 0, transition: { duration: r ? 0 : 0.24, ease: EA.out } },
+      exit:   { opacity: 0, scale: r ? 1 : 0.97, transition: { duration: r ? 0 : 0.16 } },
     },
-
-    /* ── Overlay backdrops ── */
+    /* Overlay backdrop */
     backdrop: {
       hidden: { opacity: 0 },
-      show:   { opacity: 1, transition: { duration: reduced ? 0 : duration.base } },
-      exit:   { opacity: 0, transition: { duration: reduced ? 0 : duration.fast } },
+      show:   { opacity: 1, transition: { duration: r ? 0 : 0.2 } },
+      exit:   { opacity: 0, transition: { duration: r ? 0 : 0.18 } },
     },
-
-    /* ── Slide-in drawers (from left) ── */
+    /* Drawer slide from left */
     drawer: {
       hidden: { x: "-100%" },
-      show:   { x: 0,
-                transition: reduced ? { duration: 0 } : spring.default },
-      exit:   { x: "-100%",
-                transition: reduced ? { duration: 0 }
-                           : { duration: duration.base, ease: ease.in } },
+      show:   { x: 0, transition: r ? { duration: 0 } : SP.default },
+      exit:   { x: "-100%", transition: r ? { duration: 0 } : { duration: 0.22, ease: EA.in } },
     },
-
-    /* ── Slide-in from right ── */
-    slideRight: {
-      hidden: { x: "100%" },
-      show:   { x: 0,   transition: reduced ? { duration: 0 } : spring.default },
-      exit:   { x: "100%", transition: reduced ? { duration: 0 }
-                           : { duration: duration.base, ease: ease.in } },
-    },
-
-    /* ── Accordion / height collapse ── */
+    /* Accordion height collapse */
     accordion: {
       hidden: { opacity: 0, height: 0 },
-      show:   { opacity: 1, height: "auto",
-                transition: { duration: reduced ? 0 : duration.base, ease: ease.out } },
-      exit:   { opacity: 0, height: 0,
-                transition: { duration: reduced ? 0 : duration.fast } },
+      show:   { opacity: 1, height: "auto", transition: { duration: r ? 0 : 0.3, ease: EA.out } },
+      exit:   { opacity: 0, height: 0, transition: { duration: r ? 0 : 0.2 } },
     },
-
-    /* ── Popup menus (scale from corner) ── */
+    /* Popup menu */
     popup: {
-      hidden: { opacity: 0, scale: reduced ? 1 : 0.94, y: reduced ? 0 : 6 },
-      show:   { opacity: 1, scale: 1, y: 0,
-                transition: reduced ? { duration: 0 } : spring.snappy },
-      exit:   { opacity: 0, scale: reduced ? 1 : 0.96,
-                transition: { duration: reduced ? 0 : duration.fast } },
-    },
-
-    /* ── Section heading accent bar ── */
-    accentBar: {
-      hidden: { width: 0, opacity: 0 },
-      show:   { width: "auto", opacity: 1,
-                transition: { duration: reduced ? 0 : duration.slow,
-                              delay: reduced ? 0 : 0.15, ease: ease.out } },
+      hidden: { opacity: 0, scale: r ? 1 : 0.94, y: r ? 0 : 6 },
+      show:   { opacity: 1, scale: 1, y: 0, transition: r ? { duration: 0 } : SP.snappy },
+      exit:   { opacity: 0, scale: r ? 1 : 0.96, transition: { duration: r ? 0 : 0.15 } },
     },
   };
 }
 
-/* ─── GESTURE PRESETS ────────────────────────────────────────────
-  Pass these to whileHover / whileTap directly.
-  All return {} when reduced = true.
-─────────────────────────────────────────────────────────────────── */
-export function gestures(reduced = false) {
+/* ── Gesture presets ─────────────────────────────────────────────── */
+export function mkGestures(r = false) {
   return {
-    /* Lift card on hover — standard interaction affordance */
+    /* Card lift - primary interactive affordance */
     lift: {
-      whileHover: reduced ? {} : { y: -2, transition: spring.snappy },
-      whileTap:   reduced ? {} : { scale: 0.985, transition: spring.stiff },
+      whileHover: r ? {} : { y: -2, transition: SP.snappy },
+      whileTap:   r ? {} : { scale: 0.985, transition: SP.stiff },
     },
-
-    /* Subtle scale for icon buttons */
-    iconBtn: {
-      whileHover: reduced ? {} : { scale: 1.08, transition: spring.bouncy },
-      whileTap:   reduced ? {} : { scale: 0.92,  transition: spring.stiff },
+    /* Icon button scale */
+    icon: {
+      whileHover: r ? {} : { scale: 1.1, transition: SP.bouncy },
+      whileTap:   r ? {} : { scale: 0.9, transition: SP.stiff },
     },
-
-    /* Press for clickable rows / links */
+    /* Link/row press */
     press: {
-      whileHover: reduced ? {} : { y: -3, transition: spring.snappy },
-      whileTap:   reduced ? {} : { scale: 0.98, transition: spring.stiff },
-    },
-
-    /* Pill / tag tap */
-    pill: {
-      whileTap: reduced ? {} : { scale: 0.94, transition: spring.stiff },
+      whileHover: r ? {} : { y: -3, transition: SP.snappy },
+      whileTap:   r ? {} : { scale: 0.98, transition: SP.stiff },
     },
   };
 }
 
-/* ─── TRANSITION PRESETS ─────────────────────────────────────────
-  For use in the `transition` prop directly (not inside variants).
-─────────────────────────────────────────────────────────────────── */
-export const transition = {
-  tabIndicator: (reduced) =>
-    reduced ? { duration: 0 }
-            : { type: "spring", damping: 30, stiffness: 350 },
-
-  themeIcon: (reduced) =>
-    reduced ? { duration: 0 } : { duration: duration.base, ease: ease.inOut },
-
-  imageCrossfade: (reduced) =>
-    reduced ? { duration: 0 }
-            : { duration: duration.base + 0.03, ease: ease.out },
+/* ── Specific transitions ────────────────────────────────────────── */
+export const TR = {
+  /* Sliding tab underline with layoutId */
+  tabBar:    (r) => r ? { duration: 0 } : { type: "spring", damping: 30, stiffness: 350 },
+  /* Theme toggle icon crossfade */
+  themeIcon: (r) => r ? { duration: 0 } : { duration: 0.22, ease: [0.76, 0, 0.24, 1] },
+  /* Gallery image crossfade */
+  imgFade:   (r) => r ? { duration: 0 } : { duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] },
 };
