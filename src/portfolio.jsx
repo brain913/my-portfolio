@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createTokens } from "./theme/tokens";
+import { IMG, TYPING, STATS, EXPERIENCE, EDUCATION, CERTIFICATES, REFERENCES, SKILLS, GALLERY, PROJECTS, CONNECT, TABS, TAB_S, TAB_ICON } from "./data/portfolioData";
 
 /* ─── HOOKS ─────────────────────────────────────────────────────── */
 function useTyping(strings, speed = 55, pause = 2000) {
@@ -24,206 +26,7 @@ function useIsMobile() {
   return m;
 }
 
-/* ─── DESIGN TOKENS ── Liquid Glass macOS, both modes ──────────── */
-/*
-  LIGHT: Clean editorial warm paper. Stone ink accent.
-         Surfaces: frosted glass on warm cream.
-  DARK:  Warm charcoal editorial. Muted sand accent.
-         Surfaces: frosted glass on deep warm dark.
-  Inspired by ontikreza.framer.website — bold type, clean space,
-  Liquid Glass: backdrop-filter blur+saturate, specular top-border.
-*/
-const T = (dark) => ({
-  dark,
-  // ── backgrounds ──
-  bg:           dark ? "#0f0e0c" : "#f9f7f4",
-  bgSub:        dark ? "#141210" : "#f0ede8",
-  // ── surfaces (Liquid Glass) ──
-  glass:        dark ? "rgba(255,248,240,0.07)"  : "rgba(255,255,255,0.68)",
-  glassHov:     dark ? "rgba(255,248,240,0.13)"  : "rgba(255,255,255,0.88)",
-  glassBlur:    "blur(28px) saturate(180%) brightness(1.04)",
-  glassNav:     dark ? "blur(40px) saturate(200%) brightness(0.97)" : "blur(40px) saturate(220%) brightness(1.02)",
-  specular:     dark ? "rgba(255,248,235,0.16)"  : "rgba(255,255,255,0.94)",
-  specularSide: dark ? "rgba(255,248,235,0.07)"  : "rgba(255,255,255,0.55)",
-  border:       dark ? "rgba(255,248,235,0.1)"   : "rgba(0,0,0,0.07)",
-  borderLight:  dark ? "rgba(255,248,235,0.055)" : "rgba(0,0,0,0.04)",
-  // ── text ──
-  textPrimary:   dark ? "rgba(255,248,234,0.92)" : "#1c1917",
-  textSecondary: dark ? "rgba(255,238,210,0.58)" : "#57534a",
-  textTertiary:  dark ? "rgba(255,230,195,0.34)" : "#9c9488",
-  // ── accent — warm sand (dark) / warm stone ink (light) ──
-  accent:       dark ? "#c9ad87"              : "#4a3728",
-  accentRgb:    dark ? "201,173,135"          : "74,55,40",
-  accentDim:    dark ? "rgba(201,173,135,0.1)": "rgba(74,55,40,0.07)",
-  accentBorder: dark ? "rgba(201,173,135,0.22)":"rgba(74,55,40,0.18)",
-  accentPill:   dark ? "rgba(201,173,135,0.14)":"rgba(74,55,40,0.09)",
-  // ── shadows ──
-  shadow:    dark ? "0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.28)"     : "0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04)",
-  shadowHov: dark ? "0 16px 48px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.38)"    : "0 8px 36px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
-  shadowCard:dark ? "0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,248,235,0.09)" : "0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95), inset 1px 0 0 rgba(255,255,255,0.55)",
-  // ── chrome ──
-  navBg:      dark ? "rgba(15,14,12,0.88)"   : "rgba(249,247,244,0.88)",
-  sidebarBg:  dark ? "rgba(15,14,12,0.82)"   : "rgba(249,247,244,0.82)",
-  drawerBg:   dark ? "rgba(15,14,12,0.97)"   : "rgba(249,247,244,0.97)",
-  moreMenuBg: dark ? "rgba(18,16,13,0.98)"   : "rgba(250,248,245,0.98)",
-  footerFade: dark ? "linear-gradient(to top,#0f0e0c,transparent)" : "linear-gradient(to top,#f9f7f4,transparent)",
-  // ── branch animation ──
-  branch:      dark ? "rgba(201,173,135,0.06)" : "rgba(74,55,40,0.05)",
-  blobs: dark
-    ? ["rgba(201,173,135,0.045)","rgba(180,140,100,0.03)","rgba(220,190,150,0.025)"]
-    : ["rgba(74,55,40,0.04)",   "rgba(120,95,70,0.03)", "rgba(160,130,100,0.02)"],
-  // ── radius ──
-  r: { sm:"10px", md:"14px", lg:"20px", xl:"28px", pill:"999px" },
-});
-
-/* ─── ASSETS ────────────────────────────────────────────────────── */
-const IMG = {
-  profile:      "/gallery/profile_new.jpg",
-  accelrtLogo:  "https://framerusercontent.com/images/TSAli1ZEa27c4TP04Bm7UQIUQ.png?scale-down-to=512",
-  accelrtSite:  "https://framerusercontent.com/images/e0UVnUVjKLv5Ml8kJ5dRPMFf73Q.png",
-  roboticsLogo: "https://framerusercontent.com/images/cuIo4eVBHbM00xXLX8JGOsgtUo.jpg?scale-down-to=512",
-  roboticsSite: "https://framerusercontent.com/images/GChbrPKmHoUqbyTczTyy9OKupe4.jpg",
-  cafeLogo:     "https://framerusercontent.com/images/wVaWfn9GujVGnYPiHUz6qtusWaQ.jpg",
-  cafeSite:     "https://framerusercontent.com/images/VrerlOXUnIZtWILehqwd8HIhW54.jpg",
-  city2Logo:    "https://framerusercontent.com/images/rtNcXMSTJ0h0tvEy5ukgMpY68.png",
-  city2Site:    "https://framerusercontent.com/images/y3cKAV5jwOJGcb8wAzr95VJM49c.jpg",
-  fllSite:      "https://framerusercontent.com/images/9JV40cfKNMxfprkrpOBNYEt8XQ.jpeg?scale-down-to=1024",
-  scrapyard1:   "https://framerusercontent.com/images/zVJ0xEO14uoYedqzRcyE2u3LDBs.jpg?scale-down-to=1024",
-  scrapyard2:   "https://framerusercontent.com/images/sAPlOltwcpel7KaPCn3F0RwlEU.jpg?scale-down-to=1024",
-  athletics:    "https://framerusercontent.com/images/QUj5yg4QAZFH8t6eJb1SJCCE.png?scale-down-to=1024",
-  flowerVid:    "https://framerusercontent.com/assets/J9mOhxlb8oAWga9V9J7FMk7Y.mp4",
-  squareVid:    "https://framerusercontent.com/assets/Xa80JloFiy8jFUQd7V9kAzma5L4.mp4",
-  daydreamPhoto:"https://framerusercontent.com/images/SzFUezPNJJVFtZO9J4QAIQBxI.jpeg?scale-down-to=2048",
-  daydreamIcon: "https://daydream.hackclub.com/favicon.png",
-};
-
-/* ─── DATA ──────────────────────────────────────────────────────── */
-const TYPING = ["exploring technology & finance.","thinking about good food and art.","preparing myself for what's next.","balancing academics & extracurriculars."];
-
-const STATS = [
-  { label:"Hackathons",               sub:"Organised/Competed",             val:"2+"          },
-  { label:"Model United Nations",     sub:"Competing",                      val:"Competing"   },
-  { label:"AccelRT",                  sub:"Non-profit",                     val:"2025"        },
-  { label:"FIRST Robotics Submerged", sub:"APOC",                           val:"Volunteered" },
-  { label:"FIRST Robotics Unearthed", sub:"Nationals",                      val:"Competed"    },
-  { label:"FIRST Robotics Unearthed", sub:"Regionals (UNSW, Bossley Park)", val:"Volunteered" },
-  { label:"BBHS Cafe",                sub:"Barista",                        val:"2024–2025"   },
-  { label:"City2Surf",                sub:"Volunteer",                      val:"Completed"   },
-];
-
-const EXPERIENCE = [
-  {
-    period:"2025", role:"Hackathon Organiser", company:"Hack Club",
-    link:"https://daydream.hackclub.com/sydney", location:"UNSW – In person",
-    logo:IMG.daydreamIcon, logoDark:IMG.daydreamIcon, siteImg:IMG.daydreamPhoto,
-    summary:"Organised Daydream @ UNSW for Hack Club, a non-profit dedicated to creating and organising Hackathons for students in Australia. All spending is visible through Hack Club Bank.",
-    achievements:["Organised hackathon events connecting students with industry across Australia","Managed event logistics and participant communication end-to-end","All spending transparently tracked through Hack Club Bank"],
-    tags:["Events","Community","Leadership"],
-  },
-  {
-    period:"2024–2025", role:"Volunteer", company:"AccelRT",
-    link:"https://accelrt-v2.vercel.app/", location:"Sydney – Hybrid",
-    logo:IMG.accelrtLogo, logoDark:IMG.accelrtLogo, siteImg:IMG.accelrtSite,
-    summary:"Work at AccelRT, a non-profit dedicated to creating and organising Hackathons for students in Australia — flexible, hybrid volunteering format.",
-    achievements:["Organised hackathon events connecting students with industry across Australia","Managed event logistics and participant communication end-to-end"],
-    tags:["Events","Community","Leadership"],
-  },
-  {
-    period:"2024–2025", role:"Competitor – Unearthed Season", company:"First Lego League",
-    link:"https://www.firstlegoleague.org/", location:"Sydney – In person",
-    logo:"/gallery/vanguardlight.png", logoDark:"/gallery/vanguarddark.png",
-    logoOnDark:true, siteImg:IMG.fllSite,
-    summary:"Competed in the FIRST LEGO League Unearthed Season, representing our school at Regionals (UNSW & Bossley Park) and advancing all the way to Nationals. An incredible team experience combining robotics, research, and presentation.",
-    achievements:["Advanced to Nationals — one of the top-ranked teams in Australia","Competed at two Regionals events: UNSW and Bossley Park","Designed, programmed and piloted a LEGO robot through complex missions"],
-    tags:["Robotics","STEM","Nationals","Teamwork"],
-  },
-  {
-    period:"2024", role:"Table Reset Volunteer", company:"FIRST Robotics",
-    link:"https://www.firstlegoleague.org/", location:"Sydney – In person",
-    logo:IMG.roboticsLogo, logoDark:IMG.roboticsLogo, siteImg:IMG.roboticsSite,
-    summary:"Volunteered at FIRST Robotics, Asia Pacific Open Championship (APOC) with a table reset role which taught me how to work in a fast-paced timed environment.",
-    achievements:["Managed fast-paced timed table resets across all competition rounds","Collaborated with international teams at the Asia Pacific Open Championship"],
-    tags:["Robotics","STEM","Teamwork"],
-  },
-  {
-    period:"2023–2025", role:"Barista", company:"BBHS Cafe",
-    link:"#", location:"Blacktown, NSW",
-    logo:IMG.cafeLogo, logoDark:IMG.cafeLogo, siteImg:IMG.cafeSite,
-    summary:"A barista who makes coffees, hot chocolates, shakes and cheese toasties for students and teachers. Gives me the ability to work in a fast-paced environment with a way of learning how to communicate and deliver products.",
-    achievements:["High-volume, fast-paced customer service in a school cafe setting","Developed communication and product delivery skills"],
-    tags:["Customer Service","F&B"],
-  },
-  {
-    period:"2024", role:"Volunteer", company:"City2Surf",
-    link:"https://city2surf.com.au/", location:"Sydney – In person",
-    logo:IMG.city2Logo, logoDark:IMG.city2Logo, siteImg:IMG.city2Site,
-    summary:"Volunteering at City2Surf was an exhilarating experience which showed me people from all walks of life trying to do their best for charity and giving their all to run the best they can.",
-    achievements:["Supported runners and event operations across the course","Contributed to one of Australia's largest charity fun runs"],
-    tags:["Charity","Community","Events"],
-  },
-];
-
-const EDUCATION = [
-  { school:"University of New South Wales", link:"#", role:"Bachelor of Computer Science / Law", period:"Future"      },
-  { school:"Blacktown Boys High School",    link:"#", role:"Student",                            period:"2020–2025"   },
-  { school:"Quakers Hill Public School",    link:"#", role:"Advanced & OC streams",              period:"2016–2022"   },
-];
-
-const CERTIFICATES = [
-  { name:"Chrome DevTools User",                               issuer:"Google", year:"2026", link:"#" },
-  { name:"DOM Detective",                                      issuer:"Google", year:"2026", link:"#" },
-  { name:"Android Studio User",                                issuer:"Google", year:"2025", link:"#" },
-  { name:"Machine Learning Crash Course: Numerical Data",      issuer:"Google", year:"2025", link:"#" },
-  { name:"Firebase Studio Developer Community",                issuer:"Google", year:"2025", link:"#" },
-  { name:"Machine Learning Crash Course: Classification",      issuer:"Google", year:"2025", link:"#" },
-  { name:"Machine Learning Crash Course: Logistic Regression", issuer:"Google", year:"2025", link:"#" },
-  { name:"Machine Learning Crash Course: Linear Regression",   issuer:"Google", year:"2025", link:"#" },
-  { name:"I/O 2025 – Registered",                              issuer:"Google", year:"2025", link:"#" },
-  { name:"Joined the Google Developer Program",                issuer:"Google", year:"2025", link:"#" },
-];
-
-const REFERENCES = [
-  { name:"Shuwei Guo", initials:"SG", text:"I am pleased to recommend Vatsal for his enthusiastic contributions to our team. He has demonstrated initiative by developing advertising plans for our social media platforms and participating in events, where he made valuable efforts to connect with key stakeholders. Additionally, Vatsal made creative contributions to our design team mascot during our branding discussions. His proactive attitude and willingness to support various aspects of our work have been appreciated." },
-  { name:"Aaron O'Meara", initials:"AO", text:"Vatsal played a key role in supporting the Team Alliance practice rooms at the 2025 FIRST® LEGO® League Asia Pacific Championships, ensuring teams adhered to scheduled time slots with 'gracious professionalism'. He also assisted with bump-out tasks, including rearranging furniture and maintaining clean, organised spaces. While encouraged to focus on his assigned responsibilities, he consistently demonstrated initiative and enthusiasm by seeking out additional ways to contribute throughout the day." },
-];
-
-const SKILLS = [
-  {name:"Google Dev Tools",icon:"🔧"},{name:"Raycast",    icon:"⚡"},{name:"Notion",     icon:"📋"},{name:"Arc Browser",icon:"🌐"},
-  {name:"VS Code",        icon:">_"},{name:"GitHub",     icon:"🐙"},{name:"Shapr3D",    icon:"🎨"},{name:"ChatGPT",    icon:"🤖"},
-  {name:"Kaggle",         icon:"📊"},{name:"Python",     icon:"🐍"},{name:"JavaScript", icon:"𝐉𝐒" },{name:"React",      icon:"⚛" },
-  {name:"Git",            icon:"⎇" },{name:"Figma",      icon:"✏️"},
-];
-
-const GALLERY = [
-  {label:"Campfire Hackathon",            caption:"Building, hacking, and vibing — a night to remember.",             src:"/gallery/campfire.jpg"  },
-  {label:"Fried Brothers with Friends",   caption:"Good food, great people. The crew at our favourite spot.",          src:"/gallery/fried1.jpg"    },
-  {label:"Fried Brothers with Friends",   caption:"Neon lights and fries — peak dining experience.",                  src:"/gallery/fried2.jpg"    },
-  {label:"Mock Trial vs James Ruse Ag HS",caption:"Lost by 9 pts — but we held our own in the courtroom.",            src:"/gallery/mocktrial.jpg" },
-  {label:"Comp Club UNSW AI Course",      caption:"Learning AI with the Competitive Programming Club at UNSW.",        src:"/gallery/compclub.jpg"  },
-  {label:"UNSW AI Conference @ W Sydney", caption:"The Darling Harbour view from the W Hotel.",                       src:"/gallery/unsw1.jpg"     },
-  {label:"UNSW AI Conference @ W Sydney", caption:"Night view from the conference — Sydney city lit up.",              src:"/gallery/unsw2.jpg"     },
-  {label:"UNSW AI Conference @ W Sydney", caption:"Sydney Harbour Bridge at night after the conference.",              src:"/gallery/unsw3.jpg"     },
-  {label:"UNSW AI Conference @ W Sydney", caption:"Panel: NAIC, Future Government, AMP CTO, UNSW AI Director.",       src:"/gallery/unsw4.jpg"     },
-  {label:"UNSW AI Conference @ W Sydney", caption:"Post-conference gelato run — well earned.",                         src:"/gallery/unsw5.jpg"     },
-  {label:"UNSW AI Conference @ W Sydney", caption:"Sydney CBD at night from the rooftop.",                            src:"/gallery/unsw6.jpg"     },
-  {label:"UNSW AI Conference @ W Sydney", caption:"Inside the AI panel event at W Sydney Hotel.",                     src:"/gallery/unsw7.jpg"     },
-  {label:"Scrapyard Hackathon",           caption:"Hackathon, fun times, school spirit.",                             src:IMG.scrapyard1           },
-  {label:"Multicultural Day",             caption:"Explosion of culture, food, ethnicity.",                           src:IMG.scrapyard2           },
-  {label:"Athletics Carnival",            caption:"Sport, key event, great times, fun times.",                        src:IMG.athletics            },
-];
-
-const PROJECTS = [
-  {label:"Flower Animation",   caption:"Flower animation for multimedia at 12 FPS",                                         src:IMG.flowerVid},
-  {label:"Square to Triangle", caption:"Switching between two objects by combining opposite frames with creative liberty.",  src:IMG.squareVid},
-];
-
-const CONNECT = [
-  {label:"Discord",    val:"brain913",                      icon:"💬",href:"https://discord.com/users/767977600915734530"    },
-  {label:"WhatsApp",   val:"Vatsal Mehta",                  icon:"📱",href:"https://web.whatsapp.com/send/?phone=61493444893"},
-  {label:"LinkedIn",   val:"Vatsal Mehta",                  icon:"💼",href:"https://linkedin.com/in/brain913"                },
-  {label:"Email",      val:"vatsalplayzforever@gmail.com",  icon:"✉️",href:"mailto:vatsalplayzforever@gmail.com"             },
-  {label:"Book a Call",val:"cal.com",                       icon:"📅",href:"https://cal.com/brain913"                        },
-];
+/* ─── CONTENT DATA MOVED TO src/data/portfolioData.js ───────────── */
 
 const CMD_ITEMS = [
   {section:"Actions",label:"Print Resume",icon:"🖨", hotkey:"Ctrl+P",action:()=>window.print()},
@@ -233,56 +36,12 @@ const CMD_ITEMS = [
   {section:"Coding", label:"GitHub",     icon:"🐙", hotkey:"",      action:()=>window.open("https://github.com/brain913","_blank")},
 ];
 
-const TABS     = ["Work Experience","Education","References","Tech Stack","Gallery","Projects","Connect"];
-const TAB_S    = {"Work Experience":"Work","Education":"Edu","References":"Refs","Tech Stack":"Stack","Gallery":"Gallery","Projects":"Projects","Connect":"Connect"};
-const TAB_ICON = {"Work Experience":"💼","Education":"🎓","References":"💬","Tech Stack":"⚙️","Gallery":"🌇","Projects":"🎬","Connect":"📡"};
 
-/* ─── LIQUID GLASS BACKGROUND ───────────────────────────────────── */
-function PlumCanvas({color}) {
-  const ref = useRef(null);
-  useEffect(()=>{
-    const c=ref.current; if(!c) return;
-    const PI=Math.PI,H=PI/2,J=PI/14;
-    let w=window.innerWidth,h=window.innerHeight;
-    c.width=w; c.height=h;
-    const ctx=c.getContext("2d"); ctx.lineWidth=1; ctx.strokeStyle=color;
-    let q=[],p=[];
-    const b=(x,y,a,d={v:0})=>{
-      if(x<-80||x>w+80||y<-80||y>h+80)return; d.v++;
-      const l=5+Math.random()*4,nx=x+l*Math.cos(a),ny=y+l*Math.sin(a);
-      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(nx,ny);ctx.stroke();
-      const g=d.v<=28?.78:.45;
-      if(Math.random()<g)p.push(()=>b(nx,ny,a+Math.random()*J,d));
-      if(Math.random()<g)p.push(()=>b(nx,ny,a-Math.random()*J,d));
-    };
-    const rn=()=>.2+Math.random()*.6;
-    q=[()=>b(rn()*w,-5,H),()=>b(rn()*w,h+5,-H),()=>b(-5,rn()*h,0),()=>b(w+5,rn()*h,PI)];
-    if(w<600)q=q.slice(0,2);
-    let raf;
-    const tick=()=>{
-      const cur=q;q=[];p=[];
-      cur.forEach(fn=>{Math.random()<.5?q.push(fn):fn();});
-      q.push(...p); if(q.length)raf=requestAnimationFrame(tick);
-    };
-    raf=requestAnimationFrame(tick);
-    const resize=()=>{
-      cancelAnimationFrame(raf);ctx.clearRect(0,0,w,h);
-      w=window.innerWidth;h=window.innerHeight;c.width=w;c.height=h;
-      ctx.lineWidth=1;ctx.strokeStyle=color;
-      q=[()=>b(rn()*w,-5,H),()=>b(rn()*w,h+5,-H),()=>b(-5,rn()*h,0),()=>b(w+5,rn()*h,PI)];
-      raf=requestAnimationFrame(tick);
-    };
-    window.addEventListener("resize",resize);
-    return ()=>{cancelAnimationFrame(raf);window.removeEventListener("resize",resize);};
-  },[color]);
-  return <canvas ref={ref} style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}/>;
-}
 
 function Background({t}) {
   return (
     <>
       <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",background:t.bg}}/>
-      <PlumCanvas color={t.branch}/>
       {t.blobs.map((c,i)=>(
         <div key={i} style={{position:"fixed",zIndex:0,pointerEvents:"none",
           ...[{top:"-12%",left:"8%",width:"44%",height:"44%"},{bottom:"4%",right:"4%",width:"32%",height:"32%"},{top:"38%",left:"32%",width:"28%",height:"28%"}][i],
@@ -350,6 +109,7 @@ function ThemeToggle({dark,setDark,t,style={}}) {
   return (
     <button onClick={()=>setDark(d=>!d)}
       title={dark?"Switch to Light":"Switch to Dark"}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       style={{
         display:"flex",alignItems:"center",justifyContent:"center",
         width:34,height:34,borderRadius:t.r.pill,
@@ -372,7 +132,7 @@ function ThemeToggle({dark,setDark,t,style={}}) {
 function CommandPalette({open,onClose,t}) {
   const [q,setQ]=useState(""); const [sel,setSel]=useState(0);
   const inp=useRef(null);
-  useEffect(()=>{if(open){setQ("");setSel(0);setTimeout(()=>inp.current?.focus(),50);}},[ open]);
+  useEffect(()=>{if(open){setTimeout(()=>inp.current?.focus(),50);}},[ open]);
   const f=CMD_ITEMS.filter(i=>i.label.toLowerCase().includes(q.toLowerCase()));
   useEffect(()=>{
     const h=(e)=>{
@@ -388,10 +148,10 @@ function CommandPalette({open,onClose,t}) {
   const sections=[...new Set(f.map(i=>i.section))];
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(10px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"10vh 16px 0"}}>
-      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:520,background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1.5px solid ${t.specular}`,borderRadius:t.r.xl,overflow:"hidden",boxShadow:"0 32px 80px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.12)"}}>
+      <div role="dialog" aria-modal="true" aria-label="Command palette" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:520,background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1.5px solid ${t.specular}`,borderRadius:t.r.xl,overflow:"hidden",boxShadow:"0 32px 80px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.12)"}}>
         <div style={{display:"flex",alignItems:"center",gap:10,padding:"14px 16px",borderBottom:`1px solid ${t.borderLight}`}}>
           <span style={{fontSize:14,opacity:.45}}>🔍</span>
-          <input ref={inp} value={q} onChange={e=>{setQ(e.target.value);setSel(0);}} placeholder="Search commands…"
+          <input aria-label="Search commands" ref={inp} value={q} onChange={e=>{setQ(e.target.value);setSel(0);}} placeholder="Search commands…"
             style={{flex:1,background:"none",border:"none",outline:"none",fontFamily:"var(--mono)",fontSize:13,color:t.textPrimary}}/>
           <kbd style={{fontFamily:"var(--mono)",fontSize:10,padding:"2px 7px",border:`1px solid ${t.border}`,borderRadius:t.r.sm,color:t.textTertiary,background:t.accentDim}}>Esc</kbd>
         </div>
@@ -512,9 +272,9 @@ function MobileDrawer({open,onClose,dark,setDark,onCmdOpen,t}) {
   return (
     <>
       <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(6px)",opacity:open?1:0,pointerEvents:open?"auto":"none",transition:"opacity 0.25s"}}/>
-      <div style={{position:"fixed",top:0,left:0,bottom:0,zIndex:201,width:"82vw",maxWidth:300,background:t.drawerBg,backdropFilter:t.glassNav,WebkitBackdropFilter:t.glassNav,borderRight:`1px solid ${t.border}`,overflowY:"auto",transform:open?"translateX(0)":"translateX(-100%)",transition:"transform 0.28s cubic-bezier(0.4,0,0.2,1)",boxShadow:t.shadowHov}}>
+      <div role="dialog" aria-modal="true" aria-label="Navigation menu" style={{position:"fixed",top:0,left:0,bottom:0,zIndex:201,width:"82vw",maxWidth:300,background:t.drawerBg,backdropFilter:t.glassNav,WebkitBackdropFilter:t.glassNav,borderRight:`1px solid ${t.border}`,overflowY:"auto",transform:open?"translateX(0)":"translateX(-100%)",transition:"transform 0.28s cubic-bezier(0.4,0,0.2,1)",boxShadow:t.shadowHov}}>
         <div style={{display:"flex",justifyContent:"flex-end",padding:"16px 16px 0"}}>
-          <button onClick={onClose} style={{background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1px solid ${t.border}`,borderRadius:t.r.md,width:32,height:32,cursor:"pointer",fontSize:15,color:t.textSecondary,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+          <button aria-label="Close menu" onClick={onClose} style={{background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1px solid ${t.border}`,borderRadius:t.r.md,width:32,height:32,cursor:"pointer",fontSize:15,color:t.textSecondary,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
         <SidebarContent dark={dark} setDark={setDark} onCmdOpen={()=>{onClose();onCmdOpen();}} t={t}/>
       </div>
@@ -526,7 +286,7 @@ function MobileDrawer({open,onClose,dark,setDark,onCmdOpen,t}) {
 function MobileHeader({onMenuOpen,onCmdOpen,dark,setDark,t}) {
   return (
     <header style={{position:"sticky",top:0,zIndex:10,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",background:t.navBg,backdropFilter:t.glassNav,WebkitBackdropFilter:t.glassNav,borderBottom:`1px solid ${t.border}`}}>
-      <button onClick={onMenuOpen} style={{background:t.glass,border:`1px solid ${t.border}`,borderRadius:t.r.sm,padding:"7px 10px",cursor:"pointer",display:"flex",flexDirection:"column",gap:4}}>
+      <button aria-label="Open menu" onClick={onMenuOpen} style={{background:t.glass,border:`1px solid ${t.border}`,borderRadius:t.r.sm,padding:"7px 10px",cursor:"pointer",display:"flex",flexDirection:"column",gap:4}}>
         {[18,14,18].map((w,i)=><span key={i} style={{display:"block",width:w,height:1.5,background:t.textSecondary,borderRadius:2}}/>)}
       </button>
       <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -537,7 +297,7 @@ function MobileHeader({onMenuOpen,onCmdOpen,dark,setDark,t}) {
       </div>
       <div style={{display:"flex",gap:6,alignItems:"center"}}>
         <ThemeToggle dark={dark} setDark={setDark} t={t}/>
-        <button onClick={onCmdOpen} style={{background:t.glass,border:`1px solid ${t.border}`,borderRadius:t.r.sm,padding:"7px 10px",cursor:"pointer",fontFamily:"var(--mono)",fontSize:11,color:t.textTertiary}}>⌘K</button>
+        <button aria-label="Open command palette" onClick={onCmdOpen} style={{background:t.glass,border:`1px solid ${t.border}`,borderRadius:t.r.sm,padding:"7px 10px",cursor:"pointer",fontFamily:"var(--mono)",fontSize:11,color:t.textTertiary}}>⌘K</button>
       </div>
     </header>
   );
@@ -598,13 +358,68 @@ function MobileTabBar({active,setActive,t}) {
 
 /* ══════ SECTIONS ══════════════════════════════════════════════════ */
 
-function WorkExperience({t}) {
-  const [exp,setExp]=useState(null);
+function FeaturedExperienceCard({ e, t }) {
+  const logoSrc=t.dark&&e.logoDark?e.logoDark:e.logo;
+  return (
+    <GlassCard t={t} style={{padding:0, overflow:"hidden"}}>
+      {e.siteImg&&<img src={e.siteImg} alt={e.company} style={{width:"100%",maxHeight:230,objectFit:"cover",display:"block"}}/>}
+      <div style={{padding:"16px 18px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap",marginBottom:8}}>
+          <div style={{display:"flex",gap:10,alignItems:"center"}}>
+            <div style={{width:34,height:34,borderRadius:t.r.sm,overflow:"hidden",border:`1px solid ${t.border}`}}>
+              <img src={logoSrc} alt={e.company} style={{width:"100%",height:"100%",objectFit:"cover"}} />
+            </div>
+            <div>
+              <div style={{fontFamily:"var(--heading)",fontSize:14,fontWeight:700,color:t.textPrimary}}>{e.role}</div>
+              <a href={e.link} target="_blank" rel="noreferrer" style={{fontFamily:"var(--mono)",fontSize:11,color:t.accent,textDecoration:"none"}}>{e.company} ↗</a>
+            </div>
+          </div>
+          <Pill t={t}>{e.period}</Pill>
+        </div>
+        <p style={{fontFamily:"var(--sans)",fontSize:12.5,color:t.textSecondary,lineHeight:1.65,marginBottom:8}}>{e.summary}</p>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>{e.tags.map(tag=><Pill key={tag} t={t}>{tag}</Pill>)}</div>
+      </div>
+    </GlassCard>
+  );
+}
+
+function Overview({t}) {
+  const featured = EXPERIENCE.slice(0,2);
   return (
     <section style={{padding:"clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px"}}>
-      <SectionHead sub="Roles, volunteering, and community work" t={t}>Work Experience</SectionHead>
+      <div style={{marginBottom:28,maxWidth:760}}>
+        <p style={{fontFamily:"var(--mono)",fontSize:10,color:t.accent,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:10}}>Overview</p>
+        <h1 style={{fontFamily:"var(--heading)",fontSize:"clamp(28px,6vw,52px)",lineHeight:1.05,color:t.textPrimary,margin:"0 0 10px"}}>
+          Student builder focused on technology, community, and practical impact.
+        </h1>
+        <p style={{fontFamily:"var(--sans)",fontSize:14,color:t.textSecondary,lineHeight:1.7,marginBottom:14}}>
+          I design and run student initiatives, compete in STEM programs, and build projects that connect people with opportunities.
+        </p>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          <a href="mailto:vatsalplayzforever@gmail.com" style={{padding:"10px 14px",borderRadius:t.r.md,background:t.accentPill,border:`1px solid ${t.accentBorder}`,textDecoration:"none",fontFamily:"var(--mono)",fontSize:12,color:t.accent,fontWeight:700}}>Contact Me</a>
+          <a href="https://linkedin.com/in/brain913" target="_blank" rel="noreferrer" style={{padding:"10px 14px",borderRadius:t.r.md,background:t.glass,border:`1px solid ${t.border}`,textDecoration:"none",fontFamily:"var(--mono)",fontSize:12,color:t.textSecondary}}>View LinkedIn ↗</a>
+        </div>
+      </div>
+      <SectionHead sub="Featured work and leadership highlights" t={t}>Featured Experience</SectionHead>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:12}}>
+        {featured.map((item)=><FeaturedExperienceCard key={item.company+item.period} e={item} t={t} />)}
+      </div>
+    </section>
+  );
+}
+
+function WorkExperience({t}) {
+  const [exp,setExp]=useState(null);
+  const featured = EXPERIENCE.slice(0,2);
+  const timeline = EXPERIENCE.slice(2);
+  return (
+    <section style={{padding:"clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px"}}>
+      <SectionHead sub="Featured case studies and timeline" t={t}>Work Experience</SectionHead>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))",gap:12,marginBottom:18}}>
+        {featured.map((item)=><FeaturedExperienceCard key={item.company+item.period} e={item} t={t} />)}
+      </div>
       <div style={{display:"flex",flexDirection:"column",gap:14}}>
-        {EXPERIENCE.map((e,i)=>{
+        {timeline.map((e,i)=>{
           const isOpen=exp===i;
           const logoSrc=t.dark&&e.logoDark?e.logoDark:e.logo;
           return (
@@ -688,13 +503,22 @@ function Education({t}) {
 }
 
 function References({t}) {
+  const [expanded, setExpanded] = useState({});
   return (
     <section style={{padding:"clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px"}}>
       <SectionHead sub="What people say about working with me" t={t}>References</SectionHead>
       <div style={{display:"flex",flexDirection:"column",gap:14}}>
         {REFERENCES.map((r,i)=>(
           <GlassCard key={i} t={t} style={{padding:"20px 22px"}}>
-            <p style={{fontFamily:"var(--sans)",fontSize:13.5,color:t.textSecondary,lineHeight:1.78,fontStyle:"italic",margin:"0 0 16px"}}>"{r.text}"</p>
+            <p style={{fontFamily:"var(--sans)",fontSize:13.5,color:t.textSecondary,lineHeight:1.78,fontStyle:"italic",margin:"0 0 10px"}}>
+              "{expanded[i] ? r.text : `${r.text.slice(0, 190)}...`}"
+            </p>
+            <button
+              onClick={()=>setExpanded((s)=>({ ...s, [i]: !s[i] }))}
+              style={{marginBottom:12,background:"none",border:"none",padding:0,color:t.accent,cursor:"pointer",fontFamily:"var(--mono)",fontSize:11}}
+            >
+              {expanded[i] ? "Show less" : "Read more"}
+            </button>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
               <div style={{width:34,height:34,borderRadius:"50%",background:t.accentPill,border:`1.5px solid ${t.accentBorder}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"var(--mono)",fontSize:11,fontWeight:700,color:t.accent,flexShrink:0}}>{r.initials}</div>
               <div style={{fontFamily:"var(--heading)",fontSize:13,fontWeight:700,color:t.textPrimary}}>{r.name}</div>
@@ -722,59 +546,71 @@ function TechStack({t}) {
   );
 }
 
+function GalleryGroupCard({ label, items, t, onOpen }) {
+  const [idx,setIdx]=useState(0);
+  const current=items[idx];
+  const isMulti=items.length>1;
+  return (
+    <div
+      onClick={()=>isMulti?setIdx(i=>(i+1)%items.length):onOpen(label,items,0)}
+      style={{borderRadius:t.r.lg,overflow:"hidden",position:"relative",aspectRatio:"4/3",cursor:"pointer",boxShadow:t.shadow,border:`1px solid ${t.border}`,transition:"all 0.2s"}}
+      onMouseEnter={e=>{e.currentTarget.style.boxShadow=t.shadowHov;e.currentTarget.style.transform="scale(1.025)";}}
+      onMouseLeave={e=>{e.currentTarget.style.boxShadow=t.shadow;e.currentTarget.style.transform="none";}}
+    >
+      <img src={current.src} alt={label} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",animation:"imgFade 0.22s ease"}}/>
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 55%)",pointerEvents:"none"}}/>
+      <button aria-label={`Expand ${label}`} onClick={e=>{e.stopPropagation();onOpen(label,items,idx);}}
+        style={{position:"absolute",top:7,left:7,width:26,height:26,borderRadius:t.r.sm,background:"rgba(255,255,255,0.72)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:"1px solid rgba(255,255,255,0.9)",color:"#333",fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 1px 6px rgba(0,0,0,0.18)"}}>⛶</button>
+      {isMulti&&(
+        <>
+          <div style={{position:"absolute",top:7,right:7,background:"rgba(0,0,0,0.48)",backdropFilter:"blur(8px)",borderRadius:t.r.pill,padding:"2px 7px",fontFamily:"var(--mono)",fontSize:9,color:"#fff",pointerEvents:"none"}}>{idx+1}/{items.length}</div>
+          <div style={{position:"absolute",top:7,left:0,right:0,display:"flex",justifyContent:"center",gap:4,pointerEvents:"none"}}>
+            {items.map((_,di)=><div key={di} style={{width:di===idx?13:5,height:5,borderRadius:t.r.pill,background:di===idx?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.38)",transition:"all 0.22s"}}/>)}
+          </div>
+        </>
+      )}
+      <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"8px 10px",pointerEvents:"none"}}>
+        <div style={{fontFamily:"var(--sans)",fontSize:11,color:"#fff",fontWeight:600,marginBottom:2}}>{label}</div>
+        <div style={{fontFamily:"var(--sans)",fontSize:9.5,color:"rgba(255,255,255,0.62)",lineHeight:1.4}}>{current.caption}</div>
+      </div>
+    </div>
+  );
+}
+
 function Gallery({t}) {
   const groups={};
   GALLERY.forEach(item=>{if(!groups[item.label])groups[item.label]=[];groups[item.label].push(item);});
   const [lb,setLb]=useState(null);
   const [lbIdx,setLbIdx]=useState(0);
   const openLb=(label,items,idx=0)=>{setLb({label,items});setLbIdx(idx);};
-  const lbNav=dir=>setLbIdx(i=>(i+dir+lb.items.length)%lb.items.length);
+  const lbNav=useCallback((dir)=>setLbIdx(i=>(i+dir+lb.items.length)%lb.items.length),[lb]);
+  useEffect(()=>{
+    if(!lb) return;
+    const h=(e)=>{
+      if(e.key==="Escape") setLb(null);
+      if(e.key==="ArrowRight" && lb.items.length>1) lbNav(1);
+      if(e.key==="ArrowLeft" && lb.items.length>1) lbNav(-1);
+    };
+    window.addEventListener("keydown",h);
+    return()=>window.removeEventListener("keydown",h);
+  },[lb, lbNav]);
 
   return (
     <section style={{padding:"clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px"}}>
       <SectionHead sub="Moments, events and memories — tap to cycle · ⛶ to expand" t={t}>Gallery</SectionHead>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(178px,1fr))",gap:10,marginBottom:32}}>
-        {Object.entries(groups).map(([label,items])=>{
-          const [idx,setIdx]=useState(0);
-          const current=items[idx];
-          const isMulti=items.length>1;
-          return (
-            <div key={label}
-              onClick={()=>isMulti?setIdx(i=>(i+1)%items.length):openLb(label,items,0)}
-              style={{borderRadius:t.r.lg,overflow:"hidden",position:"relative",aspectRatio:"4/3",cursor:"pointer",boxShadow:t.shadow,border:`1px solid ${t.border}`,transition:"all 0.2s"}}
-              onMouseEnter={e=>{e.currentTarget.style.boxShadow=t.shadowHov;e.currentTarget.style.transform="scale(1.025)";}}
-              onMouseLeave={e=>{e.currentTarget.style.boxShadow=t.shadow;e.currentTarget.style.transform="none";}}
-            >
-              <img src={current.src} alt={label} style={{width:"100%",height:"100%",objectFit:"cover",display:"block",animation:"imgFade 0.22s ease"}}/>
-              <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 55%)",pointerEvents:"none"}}/>
-              {/* macOS-style glass expand button */}
-              <button onClick={e=>{e.stopPropagation();openLb(label,items,idx);}}
-                style={{position:"absolute",top:7,left:7,width:26,height:26,borderRadius:t.r.sm,background:"rgba(255,255,255,0.72)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:"1px solid rgba(255,255,255,0.9)",color:"#333",fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 1px 6px rgba(0,0,0,0.18)"}}>⛶</button>
-              {isMulti&&(
-                <>
-                  <div style={{position:"absolute",top:7,right:7,background:"rgba(0,0,0,0.48)",backdropFilter:"blur(8px)",borderRadius:t.r.pill,padding:"2px 7px",fontFamily:"var(--mono)",fontSize:9,color:"#fff",pointerEvents:"none"}}>{idx+1}/{items.length}</div>
-                  <div style={{position:"absolute",top:7,left:0,right:0,display:"flex",justifyContent:"center",gap:4,pointerEvents:"none"}}>
-                    {items.map((_,di)=><div key={di} style={{width:di===idx?13:5,height:5,borderRadius:t.r.pill,background:di===idx?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.38)",transition:"all 0.22s"}}/>)}
-                  </div>
-                  <div style={{position:"absolute",right:9,top:"50%",transform:"translateY(-50%)",fontSize:20,color:"rgba(255,255,255,0.5)",pointerEvents:"none",fontWeight:300}}>›</div>
-                </>
-              )}
-              <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"8px 10px",pointerEvents:"none"}}>
-                <div style={{fontFamily:"var(--sans)",fontSize:11,color:"#fff",fontWeight:600,marginBottom:2}}>{label}</div>
-                <div style={{fontFamily:"var(--sans)",fontSize:9.5,color:"rgba(255,255,255,0.62)",lineHeight:1.4}}>{current.caption}</div>
-              </div>
-            </div>
-          );
-        })}
+        {Object.entries(groups).map(([label,items])=>(
+          <GalleryGroupCard key={label} label={label} items={items} t={t} onOpen={openLb} />
+        ))}
       </div>
       {/* Lightbox */}
       {lb&&(
         <div onClick={()=>setLb(null)} style={{position:"fixed",inset:0,zIndex:300,background:"rgba(0,0,0,0.72)",backdropFilter:"blur(16px)",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
-          <div onClick={e=>e.stopPropagation()} style={{maxWidth:740,width:"100%",background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1.5px solid ${t.specular}`,borderRadius:t.r.xl,overflow:"hidden",boxShadow:t.shadowHov}}>
+          <div role="dialog" aria-modal="true" aria-label={`${lb.label} lightbox`} onClick={e=>e.stopPropagation()} style={{maxWidth:740,width:"100%",background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1.5px solid ${t.specular}`,borderRadius:t.r.xl,overflow:"hidden",boxShadow:t.shadowHov}}>
             <div style={{position:"relative"}}>
               <img src={lb.items[lbIdx].src} alt={lb.label} style={{width:"100%",display:"block",maxHeight:460,objectFit:"cover",animation:"imgFade 0.2s ease"}}/>
               {lb.items.length>1&&[-1,1].map(dir=>(
-                <button key={dir} onClick={e=>{e.stopPropagation();lbNav(dir);}} style={{position:"absolute",[dir===-1?"left":"right"]:10,top:"50%",transform:"translateY(-50%)",width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,0.78)",backdropFilter:"blur(8px)",border:`1px solid ${t.border}`,color:t.textPrimary,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:t.shadow}}>{dir===-1?"‹":"›"}</button>
+                <button aria-label={dir===-1?"Previous image":"Next image"} key={dir} onClick={e=>{e.stopPropagation();lbNav(dir);}} style={{position:"absolute",[dir===-1?"left":"right"]:10,top:"50%",transform:"translateY(-50%)",width:38,height:38,borderRadius:"50%",background:"rgba(255,255,255,0.78)",backdropFilter:"blur(8px)",border:`1px solid ${t.border}`,color:t.textPrimary,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:t.shadow}}>{dir===-1?"‹":"›"}</button>
               ))}
               {lb.items.length>1&&(
                 <div style={{position:"absolute",bottom:10,left:0,right:0,display:"flex",justifyContent:"center",gap:5}}>
@@ -790,7 +626,7 @@ function Gallery({t}) {
                 </div>
                 <div style={{fontFamily:"var(--sans)",fontSize:12,color:t.textSecondary}}>{lb.items[lbIdx].caption}</div>
               </div>
-              <button onClick={()=>setLb(null)} style={{background:t.accentDim,border:`1px solid ${t.accentBorder}`,borderRadius:t.r.md,padding:"6px 14px",fontFamily:"var(--mono)",fontSize:12,color:t.accent,cursor:"pointer",fontWeight:700,flexShrink:0,marginLeft:12}}>✕</button>
+              <button aria-label="Close lightbox" onClick={()=>setLb(null)} style={{background:t.accentDim,border:`1px solid ${t.accentBorder}`,borderRadius:t.r.md,padding:"6px 14px",fontFamily:"var(--mono)",fontSize:12,color:t.accent,cursor:"pointer",fontWeight:700,flexShrink:0,marginLeft:12}}>✕</button>
             </div>
           </div>
         </div>
@@ -846,6 +682,7 @@ function Connect({t}) {
 
 /* ─── ROOT ──────────────────────────────────────────────────────── */
 const SECTIONS = {
+  "Overview":Overview,
   "Work Experience":WorkExperience,
   "Education":Education,
   "References":References,
@@ -857,12 +694,13 @@ const SECTIONS = {
 
 export default function Portfolio() {
   const [dark, setDark] = useState(true);
-  const [active, setActive] = useState("Work Experience");
+  const [active, setActive] = useState("Overview");
   const [cmdOpen, setCmdOpen] = useState(false);
   const [drawer, setDrawer] = useState(false);
   const isMobile = useIsMobile();
-  const tok = T(dark);
-  const Section = SECTIONS[active];
+  const tok = createTokens(dark);
+  const Section = SECTIONS[active] || Overview;
+  const year = new Date().getFullYear();
 
   const openCmd  = useCallback(()=>setCmdOpen(true),[]);
   const closeCmd = useCallback(()=>setCmdOpen(false),[]);
@@ -938,8 +776,8 @@ export default function Portfolio() {
 
           <div style={{position:"sticky",bottom:0,height:80,background:tok.footerFade,pointerEvents:"none"}}/>
           <footer style={{padding:"12px clamp(16px,4vw,36px) clamp(72px,11vw,32px)",borderTop:`1px solid ${tok.borderLight}`,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8,background:tok.navBg,backdropFilter:tok.glassNav,WebkitBackdropFilter:tok.glassNav}}>
-            <span style={{fontFamily:"var(--mono)",fontSize:10,color:tok.textTertiary}}>© 2025 Vatsal Mehta · Blacktown, NSW</span>
-            <button onClick={openCmd} style={{background:tok.glass,backdropFilter:tok.glassBlur,WebkitBackdropFilter:tok.glassBlur,border:`1px solid ${tok.border}`,borderRadius:tok.r.md,padding:"4px 10px",cursor:"pointer",fontFamily:"var(--mono)",fontSize:10,color:tok.textTertiary}}>⌘K</button>
+            <span style={{fontFamily:"var(--mono)",fontSize:10,color:tok.textTertiary}}>© {year} Vatsal Mehta · Blacktown, NSW</span>
+            <button aria-label="Open command palette" onClick={openCmd} style={{background:tok.glass,backdropFilter:tok.glassBlur,WebkitBackdropFilter:tok.glassBlur,border:`1px solid ${tok.border}`,borderRadius:tok.r.md,padding:"4px 10px",cursor:"pointer",fontFamily:"var(--mono)",fontSize:10,color:tok.textTertiary}}>⌘K</button>
           </footer>
         </div>
       </div>
