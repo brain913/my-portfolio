@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Canvas, useLoader } from "@react-three/fiber";
+import { Center, OrbitControls, Environment } from "@react-three/drei";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { mkVariants, mkGestures, SP, EA, TR } from "./animations";
 import { createTokens } from "./theme/tokens";
 import {
@@ -8,6 +11,7 @@ import {
   CONNECT_ICONS, CMD_ICON,
 } from "./data/portfolioData";
 import "./index.css";
+import { SigLight, SigDark } from "./signatures.jsx";
 
 /* ─── HOOKS ─────────────────────────────────────────────────────── */
 function useTyping(strings, speed = 55, pause = 2000) {
@@ -62,7 +66,15 @@ const T = createTokens;
 const TABS = ["Overview", "Work Experience", "Education", "References", "Tech Stack", "Gallery", "Projects", "Connect"];
 const TAB_S    = { "Overview": "Home", "Work Experience": "Work", "Education": "Edu", "References": "Refs", "Tech Stack": "Stack", "Gallery": "Gallery", "Projects": "Projects", "Connect": "Connect" };
 const TAB_ICON = { "Overview": "house", "Work Experience": "bag", "Education": "grad", "References": "chat", "Tech Stack": "gear", "Gallery": "photo", "Projects": "film", "Connect": "wave" };
-const TAB_EMOJI= { "Overview": "✦", "Work Experience": "💼", "Education": "🎓", "References": "💬", "Tech Stack": "⚙️", "Gallery": "🌇", "Projects": "🎬", "Connect": "📡" };
+const TAB_EMOJI= { "Overview": "✦", "Work Experience": "💼", "Education": " 🎓", "References": "💬", "Tech Stack": "⚙️", "Gallery": "🌇", "Projects": "🎬", "Connect": "📡" };
+
+const CONNECT_LOGO = {
+  Discord: "https://cdn.simpleicons.org/discord",
+  WhatsApp: "https://cdn.simpleicons.org/whatsapp",
+  LinkedIn: "https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg",
+  Email: "https://cdn.simpleicons.org/gmail",
+  "Book a Call": "https://cdn.simpleicons.org/caldotcom",
+};
 
 /* ─── BACKGROUND ─────────────────────────────────────────────────
    Reduced vs original: 2 blobs (down from 3), lower branch density,
@@ -305,7 +317,7 @@ function SidebarContent({ dark, setDark, onCmdOpen, t }) {
   const r = useReducedMotion(); const V = mkVariants(r);
 
   return (
-    <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "flex", flexDirection: "column", gap: 17, padding: "32px 22px 100px" }}>
+    <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "flex", flexDirection: "column", gap: 17, padding: "28px clamp(14px,2.5vw,22px) 100px" }}>
 
       {/* Profile */}
       <motion.div variants={V.item} style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -317,8 +329,9 @@ function SidebarContent({ dark, setDark, onCmdOpen, t }) {
           <img src={IMG.profile} alt="Vatsal Mehta" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </motion.div>
         <div>
-          <h1 style={{ fontFamily: "var(--heading)", fontSize: 18, fontWeight: 800, color: t.textPrimary, margin: "0 0 4px", letterSpacing: "-0.025em" }}>Vatsal Mehta</h1>
-          <Pill t={t}>Student &middot; BBHS</Pill>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 300, color: t.textPrimary, margin: "0 0 2px", letterSpacing: "0.04em" }}>Vatsal Mehta</h1>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 10.5, color: t.accent, fontStyle: "italic", letterSpacing: "0.05em", marginBottom: 4, opacity: 0.85 }}>Omnia possibilia credentibus</div>
+          <Pill t={t}>Year 10 &middot; BBHS</Pill>
           <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: t.textTertiary, marginTop: 5 }}>&#x1F4CD; Blacktown, NSW, AU</div>
         </div>
       </motion.div>
@@ -461,7 +474,7 @@ function MobileHeader({ onMenuOpen, onCmdOpen, dark, setDark, t }) {
 function DesktopNav({ active, setActive, t }) {
   const r = useReducedMotion();
   return (
-    <nav role="tablist" aria-label="Portfolio sections" style={{ position: "sticky", top: 0, zIndex: 10, display: "flex", overflowX: "auto", background: t.navBg, backdropFilter: t.glassNav, WebkitBackdropFilter: t.glassNav, borderBottom: `1px solid ${t.border}`, padding: "0 20px", scrollbarWidth: "none" }}>
+    <nav role="tablist" aria-label="Portfolio sections" style={{ position: "sticky", top: 0, zIndex: 10, display: "flex", overflowX: "auto", background: t.navBg, backdropFilter: t.glassNav, WebkitBackdropFilter: t.glassNav, borderBottom: `1px solid ${t.border}`, padding: "0 clamp(8px,2vw,20px)", scrollbarWidth: "none" }}>
       {TABS.map(tab => (
         <motion.button
           key={tab}
@@ -502,7 +515,7 @@ function MobileMoreMenu({ active, setActive, t }) {
         aria-label="More sections"
         aria-expanded={open}
         whileTap={r ? {} : { scale: 0.94 }}
-        style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "8px 4px 6px", background: "none", border: "none", cursor: "pointer" }}>
+        style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 4px 8px", background: "none", border: "none", cursor: "pointer" }}>
         <span style={{ fontSize: 18 }}>&#x22EF;</span>
         <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: rest.includes(active) ? t.accent : t.textTertiary }}>More</span>
         {rest.includes(active) && <div style={{ width: 4, height: 4, borderRadius: "50%", background: t.accent, marginTop: -2 }} />}
@@ -536,7 +549,7 @@ function MobileTabBar({ active, setActive, t }) {
         <motion.button key={tab} role="tab" aria-selected={active === tab}
           onClick={() => setActive(tab)}
           whileTap={r ? {} : { scale: 0.92 }}
-          style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "8px 4px 6px", background: "none", border: "none", cursor: "pointer" }}>
+          style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 4px 8px", background: "none", border: "none", cursor: "pointer" }}>
           <motion.span
             animate={{ scale: active === tab ? (r ? 1 : 1.15) : 1 }}
             transition={{ type: "spring", damping: 20, stiffness: 400 }}
@@ -566,20 +579,20 @@ function Overview({ t, setActive }) {
   const featured = EXPERIENCE.filter(e => e.featured);
 
   return (
-    <section aria-label="Overview" style={{ padding: "clamp(32px,6vw,64px) clamp(16px,4vw,36px) 80px" }}>
+    <section aria-label="Overview" style={{ padding: "clamp(24px,5vw,64px) clamp(14px,4vw,36px) clamp(60px,9vw,80px)" }}>
       {/* Hero narrative */}
       <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ marginBottom: 56 }}>
         <motion.div variants={V.item}>
           <p style={{ fontFamily: "var(--mono)", fontSize: 11, color: t.accent, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14 }}>Vatsal Mehta &mdash; Student, Organiser</p>
         </motion.div>
         <motion.div variants={V.item}>
-          <h1 style={{ fontFamily: "var(--heading)", fontSize: "clamp(32px,6vw,58px)", fontWeight: 800, color: t.textPrimary, lineHeight: 1.08, letterSpacing: "-0.04em", margin: "0 0 20px", maxWidth: 720 }}>
+          <h1 style={{ fontFamily: "var(--heading)", fontSize: "clamp(26px,5.5vw,58px)", fontWeight: 800, color: t.textPrimary, lineHeight: 1.08, letterSpacing: "-0.04em", margin: "0 0 20px", maxWidth: 720 }}>
             Building things, learning fast, showing up.
           </h1>
         </motion.div>
         <motion.div variants={V.item}>
-          <p style={{ fontFamily: "var(--sans)", fontSize: "clamp(14px,1.8vw,17px)", color: t.textSecondary, lineHeight: 1.7, maxWidth: 560, margin: "0 0 32px" }}>
-            Year 11 at BBHS. I organise hackathons, compete in robotics, serve coffee, and explore technology &amp; finance. I care about doing things properly and adding real value.
+          <p style={{ fontFamily: "var(--sans)", fontSize: "clamp(13.5px,1.6vw,17px)", color: t.textSecondary, lineHeight: 1.7, maxWidth: 560, margin: "0 0 32px" }}>
+            Year 10 at BBHS. I organise hackathons, compete in robotics, serve coffee, and explore technology &amp; finance. I care about doing things properly and adding real value.
           </p>
         </motion.div>
         {/* CTAs */}
@@ -598,6 +611,28 @@ function Overview({ t, setActive }) {
             transition={SP.snappy}
             style={{ padding: "12px 24px", borderRadius: t.r.pill, background: t.glass, backdropFilter: t.glassBlur, WebkitBackdropFilter: t.glassBlur, border: `1.5px solid ${t.specular}`, cursor: "pointer", fontFamily: "var(--heading)", fontSize: 14, fontWeight: 700, color: t.textPrimary, boxShadow: t.shadow }}
           >View work</motion.button>
+        </motion.div>
+
+        {/* Marquee ticker - inspired by mehtavatsal.dev */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.6 }}
+          style={{ marginTop: 44, overflow: "hidden", borderTop: `1px solid ${t.borderLight}`, borderBottom: `1px solid ${t.borderLight}`, padding: "9px 0", maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)" }}
+        >
+          <motion.div
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            style={{ display: "flex", gap: 0, whiteSpace: "nowrap", width: "max-content" }}
+          >
+            {[...Array(2)].map((_, ri) =>
+              ["Hackathon Organiser", "Robotics Nationals", "Barista", "ML Learner", "Community Builder", "BBHS Year 10", "Sydney NSW", "2025"].map((item, i) => (
+                <span key={`${ri}-${i}`} style={{ fontFamily: "var(--mono)", fontSize: 10, color: t.textTertiary, letterSpacing: "0.14em", textTransform: "uppercase", padding: "0 20px" }}>
+                  {item}<span style={{ color: t.accent, marginLeft: 20 }}>&#x2022;</span>
+                </span>
+              ))
+            )}
+          </motion.div>
         </motion.div>
       </motion.div>
 
@@ -659,7 +694,7 @@ function WorkExperience({ t }) {
   const timeline = EXPERIENCE.filter(e => !e.featured);
 
   return (
-    <section aria-label="Work Experience" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
+    <section aria-label="Work Experience" style={{ padding: "clamp(16px,4vw,40px) clamp(14px,3.5vw,36px) clamp(56px,8vw,80px)" }}>
       <SectionHead sub="Roles, volunteering, and community work" t={t}>Work Experience</SectionHead>
 
       {/* Featured case-study strips */}
@@ -672,7 +707,7 @@ function WorkExperience({ t }) {
               <GlassCard t={t} style={{ overflow: "hidden", padding: 0 }}>
                 {/* Site image hero */}
                 {e.siteImg && (
-                  <div style={{ position: "relative", height: 180, overflow: "hidden" }}>
+                  <div style={{ position: "relative", height: "clamp(130px,22vw,180px)", overflow: "hidden" }}>
                     <img src={e.siteImg} alt={e.company} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                     <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 50%)" }} />
                     <div style={{ position: "absolute", bottom: 14, left: 18, display: "flex", alignItems: "center", gap: 10 }}>
@@ -724,7 +759,7 @@ function WorkExperience({ t }) {
                       whileHover={r ? {} : { scale: 1.02 }}
                       style={{ background: "none", border: `1px solid ${t.border}`, borderRadius: t.r.pill, padding: "4px 12px", cursor: "pointer", fontFamily: "var(--mono)", fontSize: 11, color: t.accent, display: "flex", alignItems: "center", gap: 5 }}
                     >
-                      <motion.span animate={{ rotate: isOpen ? 90 : 0 }} transition={r ? { duration: 0 } : { type: "spring", damping: 22, stiffness: 350 }}>&#x203A;</motion.span>
+                      <motion.span animate={{ rotate: isOpen ? 90 : 0 }} transition={r ? { duration: 0 } : { type: "spring", damping: 22, stiffness: 350 }}>›</motion.span>
                       {isOpen ? "Less" : "More"}
                     </motion.button>
                   </div>
@@ -771,7 +806,7 @@ function WorkExperience({ t }) {
                           )}
                         </AnimatePresence>
                       </div>
-                      <motion.span animate={{ rotate: isOpen ? 90 : 0 }} transition={r ? { duration: 0 } : { type: "spring", damping: 22, stiffness: 350 }} style={{ fontSize: 13, color: t.textTertiary, flexShrink: 0, marginTop: 2, display: "inline-block" }}>&#x203A;</motion.span>
+                      <motion.span animate={{ rotate: isOpen ? 90 : 0 }} transition={r ? { duration: 0 } : { type: "spring", damping: 22, stiffness: 350 }} style={{ fontSize: 13, color: t.textTertiary, flexShrink: 0, marginTop: 2, display: "inline-block" }}>›</motion.span>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -790,7 +825,7 @@ function WorkExperience({ t }) {
 function Education({ t }) {
   const r = useReducedMotion(); const V = mkVariants(r);
   return (
-    <section aria-label="Education" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
+    <section aria-label="Education" style={{ padding: "clamp(16px,4vw,40px) clamp(14px,3.5vw,36px) clamp(56px,8vw,80px)" }}>
       <SectionHead sub="Academic background &amp; certifications" t={t}>Education</SectionHead>
       <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
         {EDUCATION.map((e, i) => (
@@ -834,7 +869,7 @@ function References({ t }) {
   const [expanded, setExpanded] = useState({});
   const r = useReducedMotion(); const V = mkVariants(r);
   return (
-    <section aria-label="References" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
+    <section aria-label="References" style={{ padding: "clamp(16px,4vw,40px) clamp(14px,3.5vw,36px) clamp(56px,8vw,80px)" }}>
       <SectionHead sub="What people say about working with me" t={t}>References</SectionHead>
       <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {REFERENCES.map((ref, i) => (
@@ -877,38 +912,82 @@ function References({ t }) {
 /* ═══════════════════════════════════════════════════════════════
    SECTION: TECH STACK
 ═══════════════════════════════════════════════════════════════ */
-const SKILL_EMOJI = { "Google Dev Tools":"🔧","Raycast":"⚡","Notion":"📋","Arc Browser":"🌐","VS Code":">_","GitHub":"🐙","Shapr3D":"🎨","ChatGPT":"🤖","Kaggle":"📊","Python":"🐍","JavaScript":"JS","React":"⚛","Git":"⎇","Figma":"✏️" };
-
 function TechStack({ t }) {
-  const r = useReducedMotion(); const V = mkVariants(r);
+  const r = useReducedMotion();
+  const ROW_A = ["JavaScript","React","Python","Git","GitHub","Figma","VS Code","Arc Browser","ChatGPT","Android Studio"];
+  const ROW_B = ["Kaggle","Machine Learning","Raycast","Notion","Shapr3D","Chrome DevTools","Google Dev Tools","Firebase","Framer","JetBrains"];
+  const SKILL_LOGO = {
+    "JavaScript": "https://cdn.simpleicons.org/javascript",
+    "React": "https://cdn.simpleicons.org/react",
+    "Python": "https://cdn.simpleicons.org/python",
+    "Git": "https://cdn.simpleicons.org/git",
+    "GitHub": "https://cdn.simpleicons.org/github",
+    "Figma": "https://cdn.simpleicons.org/figma",
+    "VS Code": "https://cdn.simpleicons.org/visualstudiocode",
+    "Arc Browser": "https://cdn.simpleicons.org/arc",
+    "ChatGPT": "https://cdn.simpleicons.org/openai",
+    "Android Studio": "https://cdn.simpleicons.org/androidstudio",
+    "Kaggle": "https://cdn.simpleicons.org/kaggle",
+    "Machine Learning": "https://cdn.simpleicons.org/scikitlearn",
+    "Raycast": "https://cdn.simpleicons.org/raycast",
+    "Notion": "https://cdn.simpleicons.org/notion",
+    "Shapr3D": "https://cdn.simpleicons.org/shapr3d",
+    "Chrome DevTools": "https://cdn.simpleicons.org/googlechrome",
+    "Google Dev Tools": "https://cdn.simpleicons.org/googlechrome",
+    "Firebase": "https://cdn.simpleicons.org/firebase",
+    "Framer": "https://cdn.simpleicons.org/framer",
+    "JetBrains": "https://cdn.simpleicons.org/jetbrains",
+  };
+  const Marquee = ({ row, dir, spd }) => {
+    const items = [...row, ...row];
+    return (
+      <div style={{ overflow:"hidden", maskImage:"linear-gradient(to right,transparent,black 10%,black 90%,transparent)", WebkitMaskImage:"linear-gradient(to right,transparent,black 10%,black 90%,transparent)" }}>
+        <motion.div
+          animate={r ? {} : { x: dir < 0 ? ["0%","-50%"] : ["-50%","0%"] }}
+          transition={{ duration: spd, repeat: Infinity, ease:"linear" }}
+          style={{ display:"flex", gap:0, width:"max-content", willChange:"transform" }}
+        >
+          {items.map((skill, i) => (
+            <motion.span key={i} whileHover={r?{}:{scale:1.08}} transition={{type:"spring",damping:20,stiffness:400}}
+              style={{ display:"flex", alignItems:"center", gap:8, padding:"9px 20px", flexShrink:0, cursor:"default" }}>
+              <img src={SKILL_LOGO[skill]} alt={`${skill} logo`} loading="lazy" referrerPolicy="no-referrer" onError={(e) => { e.currentTarget.style.display = "none"; }} style={{ width: 14, height: 14, objectFit: "contain", flexShrink: 0 }} />
+              <span style={{ fontFamily:"var(--mono)", fontSize:11.5, color:t.textSecondary, fontWeight:500, whiteSpace:"nowrap", letterSpacing:"0.03em" }}>{skill}</span>
+              <span style={{ color:t.accentBorder, fontSize:7, marginLeft:6, opacity:0.7 }}>|</span>
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+    );
+  };
   return (
-    <section aria-label="Tech Stack" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
-      <SectionHead sub="Tools and languages I use daily" t={t}>Tech Stack</SectionHead>
-      <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(138px,1fr))", gap: 10 }}>
-        {SKILLS.map((s, i) => (
-          <motion.div key={i} variants={V.item}>
-            <GlassCard t={t} style={{ padding: "13px 15px" }}>
-              <motion.div
-                whileHover={r ? {} : { scale: 1.18, rotate: [-2, 2, 0] }}
-                transition={{ type: "spring", damping: 18, stiffness: 380 }}
-                style={{ fontFamily: "var(--mono)", fontSize: 18, marginBottom: 5, display: "inline-block" }}
-              >
-                {SKILL_EMOJI[s.name] || s.icon}
-              </motion.div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 12, color: t.textSecondary, fontWeight: 500 }}>{s.name}</div>
-            </GlassCard>
-          </motion.div>
-        ))}
+    <section aria-label="Tech Stack" style={{ padding:"clamp(20px,5vw,40px) 0 80px" }}>
+      <div style={{ padding:"0 clamp(16px,4vw,36px)", marginBottom:28 }}>
+        <SectionHead sub="Tools, languages and platforms I work with" t={t}>Tech Stack</SectionHead>
+      </div>
+      <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.6,delay:0.15}} style={{display:"flex",flexDirection:"column",gap:0}}>
+        <div style={{borderTop:`1px solid ${t.borderLight}`,borderBottom:`1px solid ${t.borderLight}`,padding:"5px 0",background:t.dark?"rgba(255,248,235,0.02)":"rgba(74,55,40,0.02)"}}>
+          <Marquee row={ROW_A} dir={-1} spd={32} />
+        </div>
+        <div style={{borderBottom:`1px solid ${t.borderLight}`,padding:"5px 0",background:t.dark?"rgba(255,248,235,0.015)":"rgba(74,55,40,0.015)"}}>
+          <Marquee row={ROW_B} dir={1} spd={26} />
+        </div>
       </motion.div>
+      <div style={{padding:"24px clamp(16px,4vw,36px) 0",display:"flex",flexWrap:"wrap",gap:7}}>
+        {[...ROW_A,...ROW_B].filter((v,i,a)=>a.indexOf(v)===i).map((skill,i)=>(
+          <motion.span key={skill}
+            initial={{opacity:0,y:6}} whileInView={{opacity:1,y:0}} viewport={{once:true}}
+            transition={{duration:0.18,delay:i*0.025}}
+            whileHover={r?{}:{y:-2,scale:1.05}}
+            style={{display:"flex",alignItems:"center",gap:5,padding:"5px 12px",borderRadius:t.r.pill,background:t.glass,backdropFilter:t.glassBlur,WebkitBackdropFilter:t.glassBlur,border:`1px solid ${t.border}`,cursor:"default"}}
+          >
+            <img src={SKILL_LOGO[skill]} alt={`${skill} logo`} loading="lazy" referrerPolicy="no-referrer" onError={(e) => { e.currentTarget.style.display = "none"; }} style={{ width: 11, height: 11, objectFit: "contain", flexShrink: 0 }} />
+            <span style={{fontFamily:"var(--mono)",fontSize:10.5,color:t.textSecondary,fontWeight:500}}>{skill}</span>
+          </motion.span>
+        ))}
+      </div>
     </section>
   );
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   SECTION: GALLERY
-   GalleryCard extracted as component (fixes useState-in-map bug).
-   AnimatePresence mode="wait" for smooth image crossfades.
-═══════════════════════════════════════════════════════════════ */
 function GalleryCard({ label, items, onOpenLb, t }) {
   const [idx, setIdx] = useState(0);
   const r = useReducedMotion();
@@ -950,7 +1029,7 @@ function GalleryCard({ label, items, onOpenLb, t }) {
               <motion.div key={di} animate={{ width: di === idx ? 13 : 5, background: di === idx ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.38)" }} transition={{ duration: 0.22, ease: EA.out }} style={{ height: 5, borderRadius: t.r.pill }} />
             ))}
           </div>
-          <div style={{ position: "absolute", right: 9, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "rgba(255,255,255,0.5)", pointerEvents: "none", fontWeight: 300 }}>&#x203A;</div>
+          <div style={{ position: "absolute", right: 9, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "rgba(255,255,255,0.5)", pointerEvents: "none", fontWeight: 300 }}>›</div>
         </>
       )}
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px 10px", pointerEvents: "none" }}>
@@ -980,9 +1059,9 @@ function Gallery({ t }) {
   }, [lb, lbNav]);
 
   return (
-    <section aria-label="Gallery" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
+    <section aria-label="Gallery" style={{ padding: "clamp(16px,4vw,40px) clamp(14px,3.5vw,36px) clamp(56px,8vw,80px)" }}>
       <SectionHead sub="Moments, events and memories - tap to cycle, expand to fullscreen" t={t}>Gallery</SectionHead>
-      <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(178px,1fr))", gap: 10, marginBottom: 32 }}>
+      <motion.div variants={V.stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="gallery-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(clamp(140px,28vw,178px),1fr))", gap: 10, marginBottom: 32 }}>
         {Object.entries(groups).map(([label, items]) => (
           <motion.div key={label} variants={V.item}>
             <GalleryCard label={label} items={items} onOpenLb={openLb} t={t} />
@@ -1014,7 +1093,7 @@ function Gallery({ t }) {
                     whileHover={r ? {} : { scale: 1.08, background: "rgba(255,255,255,0.92)" }}
                     whileTap={r ? {} : { scale: 0.92 }}
                     style={{ position: "absolute", [dir === -1 ? "left" : "right"]: 10, top: "50%", transform: "translateY(-50%)", width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.78)", backdropFilter: "blur(8px)", border: `1px solid ${t.border}`, color: t.textPrimary, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {dir === -1 ? "&#x2039;" : "&#x203A;"}
+                    {dir === -1 ? "‹" : "›"}
                   </motion.button>
                 ))}
                 {lb.length > 1 && (
@@ -1056,9 +1135,28 @@ function Gallery({ t }) {
 function Projects({ t }) {
   const r = useReducedMotion(); const V = mkVariants(r);
   return (
-    <section aria-label="Projects" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
+    <section aria-label="Projects" style={{ padding: "clamp(16px,4vw,40px) clamp(14px,3.5vw,36px) clamp(56px,8vw,80px)" }}>
       <SectionHead sub="Creative &amp; multimedia work" t={t}>Projects</SectionHead>
       <motion.div variants={V.stagger} initial="hidden" animate="show" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <motion.div variants={V.item}>
+          <GlassCard t={t} style={{ overflow: "hidden", padding: 0 }}>
+            <div style={{ width: "100%", height: 320, background: t.glass }}>
+              <Canvas camera={{ position: [0, 1.4, 4.2], fov: 45 }}>
+                <ambientLight intensity={0.55} />
+                <directionalLight position={[2, 4, 3]} intensity={1.15} />
+                <ObjModel src="/models/fusering-des-1.obj" />
+                <Environment preset="city" />
+                <OrbitControls enablePan enableZoom enableRotate />
+              </Canvas>
+            </div>
+            <div style={{ padding: "14px 20px" }}>
+              <div style={{ fontFamily: "var(--heading)", color: t.textPrimary, fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Fusering Design (Interactive 3D)</div>
+              <div style={{ fontFamily: "var(--sans)", fontSize: 12.5, color: t.textSecondary, lineHeight: 1.6 }}>
+                Interactive OBJ preview. Drag to rotate, scroll to zoom, and pan to inspect details.
+              </div>
+            </div>
+          </GlassCard>
+        </motion.div>
         {PROJECTS.map((p, i) => (
           <motion.div key={i} variants={V.item}>
             <GlassCard t={t} style={{ overflow: "hidden", padding: 0 }}>
@@ -1075,11 +1173,20 @@ function Projects({ t }) {
   );
 }
 
+function ObjModel({ src }) {
+  const object = useLoader(OBJLoader, src);
+  return (
+    <Center>
+      <primitive object={object} scale={0.9} />
+    </Center>
+  );
+}
 /* ═══════════════════════════════════════════════════════════════
    SECTION: CONNECT
 ═══════════════════════════════════════════════════════════════ */
 function Connect({ t }) {
   const r = useReducedMotion(); const V = mkVariants(r);
+  const [brokenLogo, setBrokenLogo] = useState({});
   return (
     <section aria-label="Connect" style={{ padding: "clamp(20px,5vw,40px) clamp(16px,4vw,36px) 80px" }}>
       <SectionHead sub="My goal is to add value through dedication, communication and results." t={t}>Connect</SectionHead>
@@ -1097,14 +1204,30 @@ function Connect({ t }) {
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <motion.div whileHover={r ? {} : { scale: 1.12, rotate: [-4, 4, 0] }} transition={{ type: "spring", damping: 18, stiffness: 360 }}
                   style={{ width: 40, height: 40, borderRadius: t.r.md, flexShrink: 0, background: t.accentDim, border: `1px solid ${t.accentBorder}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
-                  {CONNECT_ICONS[c.icon] || c.icon}
+                  {(() => {
+                    const logo = CONNECT_LOGO[c.label];
+                    if (logo && !brokenLogo[c.label]) {
+                      return (
+                        <img
+                          src={logo}
+                          alt={`${c.label} logo`}
+                          loading="lazy"
+                          width={18}
+                          height={18}
+                          style={{ width: 18, height: 18, objectFit: "contain", display: "block" }}
+                          onError={() => setBrokenLogo((prev) => ({ ...prev, [c.label]: true }))}
+                        />
+                      );
+                    }
+                    return <span style={{ fontSize: 16 }}>{CONNECT_ICONS[c.icon] || "•"}</span>;
+                  })()}
                 </motion.div>
                 <div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: t.textTertiary, marginBottom: 2, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>{c.label}</div>
                   <div style={{ fontFamily: "var(--sans)", fontSize: 13, color: t.textPrimary, fontWeight: 600 }}>{c.val}</div>
                 </div>
               </div>
-              <motion.span whileHover={r ? {} : { x: 3 }} transition={{ type: "spring", damping: 20, stiffness: 400 }} style={{ color: t.accent, fontSize: 18, fontWeight: 300 }}>&#x2192;</motion.span>
+              <motion.span whileHover={r ? {} : { x: 3 }} transition={{ type: "spring", damping: 20, stiffness: 400 }} style={{ color: t.accent, fontWeight: 300 }}>&#x2192;</motion.span>
             </motion.a>
           </motion.div>
         ))}
@@ -1112,7 +1235,6 @@ function Connect({ t }) {
     </section>
   );
 }
-
 /* ═══════════════════════════════════════════════════════════════
    ROOT — Portfolio
 ═══════════════════════════════════════════════════════════════ */
@@ -1165,7 +1287,7 @@ export default function Portfolio() {
       <CommandPalette open={cmdOpen} onClose={closeCmd} t={tok} />
       {isMobile && <MobileDrawer open={drawer} onClose={() => setDrawer(false)} dark={dark} setDark={setDark} onCmdOpen={openCmd} t={tok} />}
 
-      <div className="g-desktop" style={{ position: "relative", zIndex: 1, gridTemplateColumns: "260px 1fr", maxWidth: 1340, margin: "0 auto", minHeight: "100vh" }}>
+      <div className="g-desktop" style={{ position: "relative", zIndex: 1, gridTemplateColumns: "var(--sidebar-w) 1fr", maxWidth: 1400, margin: "0 auto", minHeight: "100vh" }}>
         <div className="g-sidebar">
           <Sidebar dark={dark} setDark={setDark} onCmdOpen={openCmd} t={tok} />
         </div>
@@ -1195,10 +1317,18 @@ export default function Portfolio() {
           </AnimatePresence>
 
           <div style={{ position: "sticky", bottom: 0, height: 80, background: tok.footerFade, pointerEvents: "none" }} />
-          <footer role="contentinfo" style={{ padding: "12px clamp(16px,4vw,36px) clamp(72px,11vw,32px)", borderTop: `1px solid ${tok.borderLight}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, background: tok.navBg, backdropFilter: tok.glassNav, WebkitBackdropFilter: tok.glassNav }}>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: tok.textTertiary }}>
-              &copy; {new Date().getFullYear()} Vatsal Mehta &middot; Blacktown, NSW
-            </span>
+          <footer role="contentinfo" style={{ padding: "20px clamp(16px,4vw,36px) clamp(72px,11vw,36px)", borderTop: `1px solid ${tok.borderLight}`, display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 12, background: tok.navBg, backdropFilter: tok.glassNav, WebkitBackdropFilter: tok.glassNav }}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.25,0.46,0.45,0.94] }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6 }}
+            >
+              {dark ? <SigLight height={44} /> : <SigDark height={44} />}
+              <span style={{ fontFamily: "var(--mono)", fontSize: 9.5, color: tok.textTertiary, letterSpacing: "0.03em" }}>
+                Made with &#x2764;&#xFE0F; by &#x1F451;Vatsal &amp; &#x1F377; Claude
+              </span>
+            </motion.div>
             <motion.button onClick={openCmd} aria-label="Open command palette"
               whileHover={r ? {} : { scale: 1.04 }} whileTap={r ? {} : { scale: 0.95 }}
               style={{ background: tok.glass, backdropFilter: tok.glassBlur, WebkitBackdropFilter: tok.glassBlur, border: `1px solid ${tok.border}`, borderRadius: tok.r.md, padding: "4px 10px", cursor: "pointer", fontFamily: "var(--mono)", fontSize: 10, color: tok.textTertiary }}>
@@ -1212,3 +1342,18 @@ export default function Portfolio() {
     </>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

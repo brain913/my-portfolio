@@ -1,51 +1,105 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
-/* ── CSS custom properties: type scale + spacing ──────────────── */
+/* ── CSS custom properties ──────────────────────────────────── */
 :root {
   --heading: 'Syne', sans-serif;
   --sans:    'Inter', sans-serif;
   --mono:    'JetBrains Mono', monospace;
+  --display: 'Cormorant Garamond', serif;
 
-  /* Type scale */
-  --fs-display: clamp(36px, 7vw, 72px);
-  --fs-h1:      clamp(26px, 4vw, 38px);
-  --fs-h2:      clamp(18px, 3vw, 24px);
-  --fs-body:    clamp(13px, 1.5vw, 15px);
-  --fs-meta:    clamp(10px, 1.2vw, 12px);
+  --fs-display: clamp(28px, 6vw, 68px);
+  --fs-h1:      clamp(22px, 3.5vw, 36px);
+  --fs-h2:      clamp(16px, 2.5vw, 24px);
+  --fs-body:    clamp(13px, 1.4vw, 15px);
+  --fs-meta:    clamp(10px, 1.1vw, 12px);
 
-  /* Spacing scale */
-  --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;  --sp-4: 16px;
-  --sp-5: 24px;  --sp-6: 32px;  --sp-7: 48px;  --sp-8: 72px;
+  --sp-1: 4px;  --sp-2: 8px;   --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px;  --sp-7: 48px; --sp-8: 72px;
+
+  /* Sidebar widths per breakpoint */
+  --sidebar-w:        260px;
+  --sidebar-w-tablet: 210px;
 }
 
-/* ── Global reset ────────────────────────────────────────────── */
+/* ── Global reset ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { min-height: 100vh; font-family: var(--sans); }
 
-/* ── Focus-visible - accessibility phase ─────────────────────── */
+/* ── Focus-visible ──────────────────────────────────────────── */
 :focus                { outline: none; }
 :focus-visible        { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 6px; }
 button:focus-visible,
 a:focus-visible       { outline: 2px solid var(--focus-color, #c9ad87); outline-offset: 3px; border-radius: 8px; }
 
-/* ── Scrollbars ──────────────────────────────────────────────── */
-::-webkit-scrollbar               { width: 3px; height: 3px; }
-::-webkit-scrollbar-track         { background: transparent; }
-::-webkit-scrollbar-thumb         { background: rgba(128,128,128,0.25); border-radius: 3px; }
+/* ── Scrollbars ─────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 3px; height: 3px; }
+::-webkit-scrollbar-track        { background: transparent; }
+::-webkit-scrollbar-thumb        { background: rgba(128,128,128,0.25); border-radius: 3px; }
 aside::-webkit-scrollbar,
-nav::-webkit-scrollbar            { display: none; }
+nav::-webkit-scrollbar           { display: none; }
 
-/* ── Keyframes ───────────────────────────────────────────────── */
+/* ── Keyframes ──────────────────────────────────────────────── */
 @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0} }
 @keyframes imgFade { from{opacity:0;transform:scale(1.02)} to{opacity:1;transform:scale(1)} }
+@keyframes overviewTicker { from{transform:translate3d(0,0,0)} to{transform:translate3d(-50%,0,0)} }
 
-/* ── Layout utility classes ──────────────────────────────────── */
-.g-desktop { display: grid; }
+.overview-ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--ticker-border, rgba(0,0,0,0.04));
+  border-bottom: 1px solid var(--ticker-border, rgba(0,0,0,0.04));
+  padding: 9px 0;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.overview-ticker__track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  will-change: transform;
+  animation: overviewTicker 20s linear infinite;
+}
+
+.overview-ticker__track[data-reduce-motion="true"] {
+  animation: none;
+  transform: none;
+}
+
+.overview-ticker__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: currentColor;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.overview-ticker__dot {
+  color: currentColor;
+  margin-left: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT — responsive grid system
+   Desktop  ≥ 1024px : sidebar(260) + main
+   Tablet   768-1023 : sidebar(210) + main (narrower sidebar)
+   Mobile   < 768px  : single column, bottom tab bar
+══════════════════════════════════════════════════════════════ */
+.g-desktop { display: grid; grid-template-columns: var(--sidebar-w) 1fr; }
 .g-sidebar { display: block; }
 .g-topnav  { display: flex; }
 .g-mhdr    { display: none; }
 .g-mtab    { display: none; }
 
+/* ── Tablet: narrow sidebar ─────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .g-desktop { grid-template-columns: var(--sidebar-w-tablet) 1fr; }
+}
+
+/* ── Mobile: single column ──────────────────────────────────── */
 @media (max-width: 767px) {
   .g-desktop { display: block; }
   .g-sidebar { display: none; }
@@ -54,18 +108,83 @@ nav::-webkit-scrollbar            { display: none; }
   .g-mtab    { display: flex; }
 }
 
-/* ── Print ───────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   SECTION PADDING — consistent across all breakpoints
+   Desktop: generous horizontal padding
+   Tablet:  slightly reduced
+   Mobile:  tight, no wasted space
+══════════════════════════════════════════════════════════════ */
+
+/* Main content max-width guard on very wide screens */
+main > section {
+  max-width: 960px;
+}
+
+/* ── Tablet-specific tweaks ─────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  main > section {
+    max-width: 100%;
+  }
+}
+
+/* ── Mobile-specific tweaks ─────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Ensure footer doesn't overlap tab bar — 68px tab bar + safe area */
+  main {
+    padding-bottom: 0;
+  }
+
+  /* Gallery grid: 2 columns on phones, 1 on very small */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Section headings — tighter on small screens */
+  h2 { font-size: clamp(16px, 5vw, 22px) !important; }
+
+  /* Connect cards — full width */
+  .connect-list { max-width: 100% !important; }
+}
+
+@media (max-width: 420px) {
+  .gallery-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Very large screens (4K / ultrawide) ────────────────────── */
+@media (min-width: 1600px) {
+  :root { --sidebar-w: 300px; }
+  main > section { max-width: 1100px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE BOTTOM TAB BAR — better touch targets
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  /* Ensure content above tab bar has room */
+  .main-content-mobile {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 12px));
+  }
+}
+
+/* ── Print ──────────────────────────────────────────────────── */
 @media print {
   canvas, .g-mtab, .g-mhdr { display: none !important; }
   * { animation: none !important; transition: none !important; }
 }
 
-/* ── Reduced motion - CSS-level guard (Framer handles JS-level) ─ */
+/* ── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration:       0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    transition-duration:      0.01ms !important;
+    scroll-behavior:          auto !important;
+  }
+
+  .overview-ticker__track {
+    animation: none !important;
+    transform: none !important;
   }
 }
