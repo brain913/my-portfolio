@@ -187,13 +187,26 @@ export const REFERENCES = [
 ];
 
 export const SKILLS = [
-  { name: "Google Dev Tools", icon: "X" }, { name: "Raycast",     icon: "Z" },
-  { name: "Notion",           icon: "N" }, { name: "Arc Browser",  icon: "A" },
-  { name: "VS Code",          icon: "V" }, { name: "GitHub",       icon: "G" },
-  { name: "Shapr3D",          icon: "S" }, { name: "ChatGPT",      icon: "C" },
-  { name: "Kaggle",           icon: "K" }, { name: "Python",       icon: "P" },
-  { name: "JavaScript",       icon: "J" }, { name: "React",        icon: "R" },
-  { name: "Git",              icon: "g" }, { name: "Figma",        icon: "F" },
+  { name: "JavaScript", site: "https://developer.mozilla.org/docs/Web/JavaScript", logo: "https://cdn.simpleicons.org/javascript" },
+  { name: "React", site: "https://react.dev", logo: "https://cdn.simpleicons.org/react" },
+  { name: "Python", site: "https://www.python.org", logo: "https://cdn.simpleicons.org/python" },
+  { name: "Git", site: "https://git-scm.com", logo: "https://cdn.simpleicons.org/git" },
+  { name: "GitHub", site: "https://github.com", logo: "https://cdn.simpleicons.org/github" },
+  { name: "Figma", site: "https://www.figma.com", logo: "https://cdn.simpleicons.org/figma" },
+  { name: "VS Code", site: "https://code.visualstudio.com", logo: "https://cdn.simpleicons.org/visualstudiocode" },
+  { name: "Arc Browser", site: "https://arc.net", logo: "https://cdn.simpleicons.org/arc" },
+  { name: "ChatGPT", site: "https://chatgpt.com", logo: "https://cdn.simpleicons.org/openai" },
+  { name: "Android Studio", site: "https://developer.android.com/studio", logo: "https://cdn.simpleicons.org/androidstudio" },
+  { name: "Kaggle", site: "https://www.kaggle.com", logo: "https://cdn.simpleicons.org/kaggle" },
+  { name: "Machine Learning", site: "https://scikit-learn.org", logo: "https://cdn.simpleicons.org/scikitlearn" },
+  { name: "Raycast", site: "https://www.raycast.com", logo: "https://cdn.simpleicons.org/raycast" },
+  { name: "Notion", site: "https://www.notion.so", logo: "https://cdn.simpleicons.org/notion" },
+  { name: "Shapr3D", site: "https://www.shapr3d.com", logo: "https://cdn.simpleicons.org/shapr3d" },
+  { name: "Chrome DevTools", site: "https://developer.chrome.com/docs/devtools", logo: "https://cdn.simpleicons.org/googlechrome" },
+  { name: "Google Dev Tools", site: "https://developer.chrome.com/docs/devtools", logo: "https://cdn.simpleicons.org/googlechrome" },
+  { name: "Firebase", site: "https://firebase.google.com", logo: "https://cdn.simpleicons.org/firebase" },
+  { name: "Framer", site: "https://www.framer.com", logo: "https://cdn.simpleicons.org/framer" },
+  { name: "JetBrains", site: "https://www.jetbrains.com", logo: "https://cdn.simpleicons.org/jetbrains" },
 ];
 
 export const GALLERY = [

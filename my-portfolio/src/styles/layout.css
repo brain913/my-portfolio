@@ -1,0 +1,42 @@
+:root {
+    --background-color: rgba(255, 255, 255, 0.8);
+    --primary-color: #6200ea;
+    --secondary-color: #03dac6;
+    --text-color: #000;
+    --header-height: 60px;
+    --section-padding: 80px 20px;
+}
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+main {
+    padding-top: var(--header-height);
+}
+
+section {
+    padding: var(--section-padding);
+    scroll-margin-top: var(--header-height);
+}
+
+@media (max-width: 768px) {
+    section {
+        padding: 60px 10px;
+    }
+}

@@ -10,10 +10,10 @@ const PATHS = `
 `;
 
 /* React component — renders inline, no network request, no CORS */
-export function SigLight({ height = 48, style = {} }) {
+export function SigLight({ height = 96, style = {} }) {
   return (
     <svg
-      width="319" height="239" viewBox="0 0 319 239" fill="none"
+      width="638" height="478" viewBox="0 0 319 239" fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ height, width: "auto", display: "block", ...style }}
       dangerouslySetInnerHTML={{ __html: PATHS.replace(/stroke-width/g, 'stroke="white" stroke-width') }}
@@ -21,10 +21,10 @@ export function SigLight({ height = 48, style = {} }) {
   );
 }
 
-export function SigDark({ height = 48, style = {} }) {
+export function SigDark({ height = 96, style = {} }) {
   return (
     <svg
-      width="319" height="239" viewBox="0 0 319 239" fill="none"
+      width="638" height="478" viewBox="0 0 319 239" fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ height, width: "auto", display: "block", ...style }}
       dangerouslySetInnerHTML={{ __html: PATHS.replace(/stroke-width/g, 'stroke="black" stroke-width') }}
